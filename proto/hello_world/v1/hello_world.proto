@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 service HelloService {
   rpc SayHello (SayHelloRequest) returns (SayHelloResponse) {
     option (google.api.http) = {
-      post: "/v1/example/echo"
+      post: "hello/v1/"
       body: "*"
     };
   }
