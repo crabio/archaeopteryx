@@ -1,15 +1,18 @@
 name: Go
 on: [push]
 jobs:
-  build:
-    name: Build
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    container: golang:latest
+    container:
+      image: golang:latest
     steps:
     - name: Check out code
       uses: actions/checkout@v1
-    - name: Build
-      run: go build -v ./...
+    - name: Install tools
+      run: make install
+    - name: Lint
+      run: make test
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -31,8 +34,19 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v1
     - name: Install tools
-      run: make install && go mod tidy
+      run: make install
     - name: Regenerate files
       run: make generate
     - name: Check for a diff
       run: git diff --exit-code
+  build:
+    # Run after lint and generate jobs
+    needs: [ test, lint, generate ]
+    name: Build
+    runs-on: ubuntu-latest
+    container: golang:latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v1
+    - name: Build
+      run: go build -v ./...
