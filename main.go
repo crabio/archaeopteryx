@@ -14,11 +14,11 @@ import (
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	helloworldpb.UnimplementedGreeterServer
+	helloworldpb.UnimplementedHelloServiceServer
 }
 
-func (s *server) SayHello(ctx context.Context, in *helloworldpb.HelloRequest) (*helloworldpb.HelloReply, error) {
-	return &helloworldpb.HelloReply{Message: in.Name + " world"}, nil
+func (s *server) SayHello(ctx context.Context, in *helloworldpb.SayHelloRequest) (*helloworldpb.SayHelloResponse, error) {
+	return &helloworldpb.SayHelloResponse{Message: in.Name + " world"}, nil
 }
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 	// Create a gRPC server object
 	s := grpc.NewServer()
 	// Attach the Greeter service to the server
-	helloworldpb.RegisterGreeterServer(s, &server{})
+	helloworldpb.RegisterHelloServiceServer(s, &server{})
 	// Serve gRPC server
 	log.Println("Serving gRPC on 0.0.0.0:8080")
 	go func() {
@@ -52,7 +52,7 @@ func main() {
 
 	gwmux := runtime.NewServeMux()
 	// Register Greeter
-	err = helloworldpb.RegisterGreeterHandler(context.Background(), gwmux, conn)
+	err = helloworldpb.RegisterHelloServiceHandler(context.Background(), gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
