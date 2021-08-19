@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package user.v1;
+option go_package = "github.com/iakrevetkho/archaeopteryx;user";
+
+import "google/api/annotations.proto";
+
+service UserService {
+  rpc AddUser (AddUserRequest) returns (AddUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/example/echo"
+      body: "*"
+    };
+  }
+}
+
+message AddUserRequest {
+  string name = 1;
+  string password = 2;
+}
+
+message AddUserResponse {
+  uint32 id = 1;
+}
