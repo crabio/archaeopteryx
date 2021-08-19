@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "user/v1/user.proto",
+    "title": "user/v2/user.proto",
     "version": "version not set"
   },
   "tags": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/user/v1": {
+    "/user/v2": {
       "post": {
         "operationId": "UserService_AddUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1AddUserResponse"
+              "$ref": "#/definitions/v2AddUserResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1AddUserRequest"
+              "$ref": "#/definitions/v2AddUserRequest"
             }
           }
         ],
@@ -80,10 +80,13 @@
         }
       }
     },
-    "v1AddUserRequest": {
+    "v2AddUserRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
           "type": "string"
         },
         "password": {
@@ -91,7 +94,7 @@
         }
       }
     },
-    "v1AddUserResponse": {
+    "v2AddUserResponse": {
       "type": "object",
       "properties": {
         "id": {
