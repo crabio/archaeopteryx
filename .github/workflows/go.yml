@@ -41,7 +41,7 @@ jobs:
       run: git diff --exit-code
   build:
     # Run after lint and generate jobs
-    needs: [ lint, generate ]
+    needs: [ test, lint, generate ]
     name: Build
     runs-on: ubuntu-latest
     container: golang:latest
