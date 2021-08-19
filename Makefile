@@ -5,10 +5,16 @@ generate:
 lint:
 	# Lint proto
 	buf lint
+	# Lint golang
+	golangci-lint run
+
+test:
+	go test -v ./...
 
 BUF_VERSION:=0.48.2
 
 install:
+	echo "Install Buf generators"
 	go install \
 		google.golang.org/protobuf/cmd/protoc-gen-go \
 		google.golang.org/grpc/cmd/protoc-gen-go-grpc \
@@ -18,3 +24,6 @@ install:
     	"https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/buf-$(shell uname -s)-$(shell uname -m)" \
     	-o "$(shell go env GOPATH)/bin/buf" && \
   	chmod +x "$(shell go env GOPATH)/bin/buf"
+
+	echo "Install linter"
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.42.0
