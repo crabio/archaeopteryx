@@ -1,14 +1,12 @@
 syntax = "proto3";
 
-package hello_world;
+package hello_world.v1;
 option go_package = "github.com/iakrevetkho/archaeopteryx;hello_world";
 
 import "google/api/annotations.proto";
 
-// The greeting service definition
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {
+service HelloService {
+  rpc SayHello (SayHelloRequest) returns (SayHelloResponse) {
     option (google.api.http) = {
       post: "/v1/example/echo"
       body: "*"
@@ -17,11 +15,11 @@ service Greeter {
 }
 
 // The request message containing the user's name
-message HelloRequest {
+message SayHelloRequest {
   string name = 1;
 }
 
 // The response message containing the greetings
-message HelloReply {
+message SayHelloResponse {
   string message = 1;
 }

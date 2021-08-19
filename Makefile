@@ -3,8 +3,9 @@ generate:
 	buf generate
 
 lint:
+	# Lint proto
 	buf lint
-	buf breaking --against 'https://github.com/johanbrandhorst/grpc-gateway-boilerplate.git#branch=master'
+	# Lint golang
 
 BUF_VERSION:=0.48.2
 
