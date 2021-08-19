@@ -1,15 +1,6 @@
 name: Go
 on: [push]
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    container: golang:latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v1
-    - name: Build
-      run: go build -v ./...
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -36,3 +27,14 @@ jobs:
       run: make generate
     - name: Check for a diff
       run: git diff --exit-code
+  build:
+    # Run after lint and generate jobs
+    needs: lint, generate
+    name: Build
+    runs-on: ubuntu-latest
+    container: golang:latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v1
+    - name: Build
+      run: go build -v ./...
