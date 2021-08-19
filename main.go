@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	helloworldpb "github.com/iakrevetkho/archaeopteryx/proto/hello_world"
+	helloworldpb "github.com/iakrevetkho/archaeopteryx/proto/hello_world/v1"
 )
 
 // server is used to implement helloworld.GreeterServer.
