@@ -5,7 +5,6 @@ generate:
 lint:
 	# Lint proto
 	buf lint
-	# Lint golang
 
 BUF_VERSION:=0.48.2
 
