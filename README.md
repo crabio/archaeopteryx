@@ -17,3 +17,21 @@ make install
 ```sh
 make generate
 ```
+
+## Run
+
+To run server use
+```sh
+go run .
+```
+
+## Test
+
+### gRPC gateway
+
+To test REST gRPC gateway use command:
+```sh
+curl -X POST -k http://localhost:8090/v1/example/echo -d '{"name": " hello"}'
+```
+
+As a result you should get response: `{"message":" hello world"}`

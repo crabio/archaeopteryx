@@ -1,4 +1,5 @@
 generate:
+	buf mod update
 	buf generate
 
 lint:
