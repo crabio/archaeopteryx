@@ -1,4 +1,5 @@
 generate:
+	go mod tidy
 	buf mod update
 	buf generate
 
