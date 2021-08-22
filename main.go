@@ -15,7 +15,7 @@ import (
 
 func main() {
 	conf := config.LoadConfig()
-	helpers.InitLogger(conf.Log.Level)
+	helpers.InitLogger(conf)
 	log := helpers.CreateComponentLogger("main")
 	log.WithField("config", helpers.MustMarshal(conf)).Info("Config is inited")
 
