@@ -11,6 +11,7 @@ import (
 	// Internal
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
+	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
 )
 
 var (
@@ -19,6 +20,7 @@ var (
 	grpcServicesRegistrars = []func(grpc.ServiceRegistrar) error{
 		api_hello_world_v1.RegisterServiceServer,
 		api_user_v1.RegisterServiceServer,
+		api_user_v2.RegisterServiceServer,
 	}
 )
 

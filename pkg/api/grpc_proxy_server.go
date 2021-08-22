@@ -13,6 +13,7 @@ import (
 	// Internal
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
+	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
 )
 
 var (
@@ -21,6 +22,7 @@ var (
 	grpcProxyServicesRegistrars = []func(*runtime.ServeMux, *grpc.ClientConn) error{
 		api_hello_world_v1.RegisterProxyServiceServer,
 		api_user_v1.RegisterProxyServiceServer,
+		api_user_v2.RegisterProxyServiceServer,
 	}
 )
 
