@@ -12,6 +12,16 @@ import (
 
 	// Internal
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
+	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
+)
+
+var (
+	// List with all proxy service registars.
+	// If you add new service, you need to add registrar here.
+	grpcProxyServicesRegistrars = []func(*runtime.ServeMux, *grpc.ClientConn) error{
+		api_hello_world_v1.RegisterProxyServiceServer,
+		api_user_v1.RegisterProxyServiceServer,
+	}
 )
 
 type grpcProxyServer struct {
@@ -48,8 +58,10 @@ func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, err
 	}
 
 	// Register proxy service routes
-	if err := api_hello_world_v1.RegisterProxyServiceServer(mux, server.grpcConn); err != nil {
-		return nil, err
+	for _, proxyServiceRegistrar := range grpcProxyServicesRegistrars {
+		if err := proxyServiceRegistrar(mux, server.grpcConn); err != nil {
+			return nil, err
+		}
 	}
 
 	server.server = &http.Server{

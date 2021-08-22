@@ -12,6 +12,11 @@ service UserService {
       body: "*"
     };
   }
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v2/user"
+    };
+  }
 }
 
 message AddUserRequest {
@@ -22,4 +27,13 @@ message AddUserRequest {
 
 message AddUserResponse {
   uint32 id = 1;
+}
+
+message GetUserRequest {
+  uint32 id = 1;
+}
+
+message GetUserResponse {
+  string name = 1;
+  string password = 2;
 }

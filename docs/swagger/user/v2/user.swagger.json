@@ -17,6 +17,35 @@
   ],
   "paths": {
     "/v2/user": {
+      "get": {
+        "operationId": "UserService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v2GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      },
       "post": {
         "operationId": "UserService_AddUser",
         "responses": {
@@ -100,6 +129,17 @@
         "id": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "v2GetUserResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     }
