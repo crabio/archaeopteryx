@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "hello_world/v1/hello_world.proto",
+    "title": "user/v2/user.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "HelloService"
+      "name": "UserService"
     }
   ],
   "consumes": [
@@ -16,14 +16,43 @@
     "application/json"
   ],
   "paths": {
-    "/v1/hello": {
-      "post": {
-        "operationId": "HelloService_SayHello",
+    "/v2/user": {
+      "get": {
+        "operationId": "UserService_GetUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1SayHelloResponse"
+              "$ref": "#/definitions/v2GetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      },
+      "post": {
+        "operationId": "UserService_AddUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v2AddUserResponse"
             }
           },
           "default": {
@@ -39,12 +68,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1SayHelloRequest"
+              "$ref": "#/definitions/v2AddUserRequest"
             }
           }
         ],
         "tags": [
-          "HelloService"
+          "UserService"
         ]
       }
     }
@@ -80,23 +109,42 @@
         }
       }
     },
-    "v1SayHelloRequest": {
+    "v2AddUserRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "password": {
           "type": "string"
         }
-      },
-      "title": "The request message containing the user's name"
+      }
     },
-    "v1SayHelloResponse": {
+    "v2AddUserResponse": {
       "type": "object",
       "properties": {
-        "message": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "v2GetUserResponse": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "password": {
           "type": "string"
         }
-      },
-      "title": "The response message containing the greetings"
+      }
     }
   }
 }
