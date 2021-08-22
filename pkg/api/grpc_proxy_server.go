@@ -44,7 +44,7 @@ type grpcProxyServer struct {
 // Requests from the [port] will be redirected to the [grpcServer] port.
 func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, error) {
 	server := new(grpcProxyServer)
-	server.log = helpers.CreateComponentLogger("grpc")
+	server.log = helpers.CreateComponentLogger("grpc-proxy")
 	server.port = port
 	server.grpcServer = grpcServer
 

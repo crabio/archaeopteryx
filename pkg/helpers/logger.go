@@ -5,8 +5,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func InitLogger() {
+	logrus.SetFormatter(&nested.Formatter{})
+}
+
 func CreateComponentLogger(componentName string) *logrus.Entry {
-	log := logrus.New()
-	log.SetFormatter(&nested.Formatter{})
-	return log.WithField("component", componentName)
+	return logrus.WithField("component", componentName)
 }
