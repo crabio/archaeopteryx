@@ -2,19 +2,21 @@ package main
 
 import (
 	// External
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/pkg/api"
+	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 func main() {
-	api.NewServer()
+	log := helpers.CreateComponentLogger("main")
 
-	log.Println("Wait exit signal")
+	api.RunServer()
+
+	log.Info("Wait exit signal")
 	quitSignal := make(chan os.Signal, 1)
 	signal.Notify(quitSignal, syscall.SIGINT, syscall.SIGTERM)
 	<-quitSignal

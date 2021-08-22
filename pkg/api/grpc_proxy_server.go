@@ -3,11 +3,11 @@ package api
 import (
 	// External
 	"context"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 
@@ -15,6 +15,7 @@ import (
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
 	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
+	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 var (
@@ -28,6 +29,7 @@ var (
 )
 
 type grpcProxyServer struct {
+	log        *logrus.Entry
 	port       int
 	grpcServer *grpcServer
 
@@ -42,6 +44,7 @@ type grpcProxyServer struct {
 // Requests from the [port] will be redirected to the [grpcServer] port.
 func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, error) {
 	server := new(grpcProxyServer)
+	server.log = helpers.CreateComponentLogger("grpc")
 	server.port = port
 	server.grpcServer = grpcServer
 
@@ -78,6 +81,7 @@ func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, err
 			return nil, err
 		}
 	}
+	server.log.Debug("Services are registered")
 
 	server.server = &http.Server{
 		Addr:    ":" + strconv.Itoa(server.port),
@@ -91,10 +95,10 @@ func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, err
 func (ps *grpcProxyServer) run() error {
 	go func() {
 		if err := ps.server.ListenAndServe(); err != nil {
-			log.Fatalln(err)
+			ps.log.WithError(err).Fatal("Couldn't serve gRPC-Gateway server")
 		}
 	}()
 
-	log.Println("Serving gRPC-Gateway on http://0.0.0.0:" + strconv.Itoa(ps.port))
+	ps.log.WithField("url", "http://0.0.0.0:"+strconv.Itoa(ps.port)).Debug("Serving gRPC-Gateway")
 	return nil
 }
