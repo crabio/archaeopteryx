@@ -16,14 +16,17 @@ type HelloServiceServer struct {
 	hello_world_v1.UnimplementedHelloServiceServer
 }
 
-func RegisterServiceServer(s grpc.ServiceRegistrar, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+func RegisterServiceServer(s grpc.ServiceRegistrar) error {
 	// Attach the Hello service to the server
 	hello_world_v1.RegisterHelloServiceServer(s, &HelloServiceServer{})
 
+	return nil
+}
+
+func RegisterProxyServiceServer(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
 	// Attach handler to global handler
 	if err := hello_world_v1.RegisterHelloServiceHandler(context.Background(), mux, conn); err != nil {
 		return err
 	}
-
 	return nil
 }
