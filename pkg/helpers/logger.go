@@ -5,7 +5,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func InitLogger() {
+func InitLogger(level logrus.Level) {
+	logrus.SetLevel(level)
 	logrus.SetFormatter(&nested.Formatter{})
 }
 

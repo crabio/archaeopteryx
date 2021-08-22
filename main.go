@@ -2,22 +2,22 @@ package main
 
 import (
 	// External
+
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/sirupsen/logrus"
-
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/pkg/api"
+	"github.com/iakrevetkho/archaeopteryx/pkg/config"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 func main() {
-	helpers.InitLogger()
-	logrus.SetLevel(logrus.TraceLevel)
-
+	conf := config.LoadConfig()
+	helpers.InitLogger(conf.Log.Level)
 	log := helpers.CreateComponentLogger("main")
+	log.WithField("config", helpers.MustMarshal(conf)).Info("Config is inited")
 
 	api.RunServer()
 
