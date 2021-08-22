@@ -29,9 +29,31 @@ go run .
 
 ### gRPC gateway
 
+#### Hello world
+
 To test REST gRPC gateway use command:
 ```sh
-curl -X POST -k http://localhost:8090/hello/v1 -d '{"name": " hello"}'
+curl -X POST -k http://localhost:8090/v1/hello -d '{"name": " hello"}'
 ```
 
 As a result you should get response: `{"message":" hello world"}`
+
+#### User
+
+##### Add User
+
+To test REST gRPC gateway use command:
+```sh
+curl -X POST -k http://localhost:8090/v1/user -d '{"name":"bobby","password":"ilu"}'
+```
+
+As a result you should get response: `{"id":<random id>}`
+
+##### Get User
+
+To test REST gRPC gateway use command:
+```sh
+curl -X GET -k http://localhost:8090/v1/user?id=123
+```
+
+As a result you should get response: `{"name":"Bobby", "password":"qwerty"}`
