@@ -31,7 +31,7 @@ go run .
 
 To test REST gRPC gateway use command:
 ```sh
-curl -X POST -k http://localhost:8090/hello/v1/ -d '{"name": " hello"}'
+curl -X POST -k http://localhost:8090/hello/v1 -d '{"name": " hello"}'
 ```
 
 As a result you should get response: `{"message":" hello world"}`

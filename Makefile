@@ -1,28 +1,16 @@
-generate:
-	echo "Generate proto"
-	go mod tidy
-	buf mod update
-	buf generate
-
-lint:
-	echo "Run linter"
-	# Lint proto
-	buf lint
-	# Lint golang
-	golangci-lint run
-
-test:
-	echo "Run unit tests"
-	go test -v ./...
-
-run:
-	echo "Run app"
-	go run .
-
-BUF_VERSION:=0.48.2
+help:
+	@echo "Makefile for the archaeopteryx."
+	@echo "Available targets:"
+	@echo " help - print help information"
+	@echo " install - install required dependecies for the project"
+	@echo " generate - generate proto files"
+	@echo " lint - run linter"
+	@echo " test - run unit tests"
+	@echo " run - run application"
 
 install:
-	echo "Install Buf generators"
+	@echo "Install Buf generators"
+	BUF_VERSION:=0.48.2
 	go install \
 		google.golang.org/protobuf/cmd/protoc-gen-go \
 		google.golang.org/grpc/cmd/protoc-gen-go-grpc \
@@ -35,3 +23,24 @@ install:
 
 	echo "Install linter"
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.42.0
+
+generate:
+	@echo "Generate proto"
+	go mod tidy
+	buf mod update
+	buf generate
+
+lint:
+	@echo "Run linter"
+	# Lint proto
+	buf lint
+	# Lint golang
+	golangci-lint run
+
+test:
+	@echo "Run unit tests"
+	go test -v ./...
+
+run:
+	@echo "Run app"
+	go run .

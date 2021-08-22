@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/user/v2": {
+    "/v2/user": {
       "post": {
         "operationId": "UserService_AddUser",
         "responses": {

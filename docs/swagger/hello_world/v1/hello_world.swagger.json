@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/hello/v1": {
+    "/v1/hello": {
       "post": {
         "operationId": "HelloService_SayHello",
         "responses": {
