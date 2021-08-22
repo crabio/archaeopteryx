@@ -9,6 +9,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	// Internal
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
@@ -45,7 +46,19 @@ func newGrpcProxyServer(port int, grpcServer *grpcServer) (*grpcProxyServer, err
 	server.grpcServer = grpcServer
 
 	// Create mux router to route HTTP requests in server
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(
+			runtime.MIMEWildcard,
+			&runtime.JSONPb{
+				MarshalOptions: protojson.MarshalOptions{
+					// Not use proto names when decode message in request.
+					// We need this to have camel case in request and response
+					// in JSON field names.
+					UseProtoNames: false,
+				},
+			},
+		),
+	)
 
 	// Create a client connection to the gRPC server
 	var err error

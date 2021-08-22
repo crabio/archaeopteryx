@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	NIL_REQUEST_ERROR      = errors.New("request is empty")
 	EMPTY_FIRST_NAME_ERROR = errors.New("first name shouldn't be empty")
 	EMPTY_LAST_NAME_ERROR  = errors.New("last name shouldn't be empty")
 	EMPTY_PASSWORD_ERROR   = errors.New("password shouldn't be empty")

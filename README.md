@@ -64,7 +64,7 @@ As a result you should get response: `{"name":"Bobby", "password":"qwerty"}`
 
 To test REST gRPC gateway use command:
 ```sh
-curl -X POST -k http://localhost:8090/v2/user -d '{"fisrt_name":"bobby","last_name":"twist","password":"ilu"}'
+curl -X POST -k http://localhost:8090/v2/user -d '{"firstName":"bobby","lastName":"twist","password":"ilu"}'
 ```
 
 As a result you should get response: `{"id":<random id>}`
@@ -73,7 +73,7 @@ As a result you should get response: `{"id":<random id>}`
 
 To test REST gRPC gateway use command:
 ```sh
-curl -X GET -k http://localhost:8090/v1/user?id=123
+curl -X GET -k http://localhost:8090/v2/user?id=123
 ```
 
-As a result you should get response: `{"name":"Bobby", "password":"qwerty"}`
+As a result you should get response: `{"firstName":"Bobby", "lastName":"Twist", "password":"qwerty"}`
