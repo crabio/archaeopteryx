@@ -19,6 +19,8 @@ var (
 )
 
 func (s *UserServiceServer) AddUser(ctx context.Context, request *user_v2.AddUserRequest) (*user_v2.AddUserResponse, error) {
+	s.log.WithField("request", request.String()).Trace("Add user request")
+
 	if request.GetFirstName() == "" {
 		return nil, EMPTY_FIRST_NAME_ERROR
 	}
@@ -31,6 +33,10 @@ func (s *UserServiceServer) AddUser(ctx context.Context, request *user_v2.AddUse
 
 	rand.Seed(time.Now().UnixNano())
 	userId := rand.Uint32()
+	s.log.WithField("id", userId).Trace("User ID generated")
 
-	return &user_v2.AddUserResponse{Id: userId}, nil
+	response := user_v2.AddUserResponse{Id: userId}
+	s.log.WithField("response", response.String()).Trace("Add user response")
+
+	return &response, nil
 }
