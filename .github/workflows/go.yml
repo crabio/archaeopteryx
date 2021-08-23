@@ -53,6 +53,11 @@ jobs:
   docker-build:
     # Run after lint and generate jobs
     needs: [ test, lint, generate ]
+    # On tag only
+    on:
+      push:
+        tags:
+          - 'v*'
     name: Build Docker image
     runs-on: ubuntu-latest
     steps:
