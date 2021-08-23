@@ -2,16 +2,17 @@ package api
 
 import (
 	// External
-	"log"
 	"net"
 	"strconv"
 
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	// Internal
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
 	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
+	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 )
 
 type grpcServer struct {
+	log        *logrus.Entry
 	port       int
 	grpcServer *grpc.Server
 }
@@ -32,6 +34,7 @@ type grpcServer struct {
 // Function creates gRPC server on the [port]
 func newGrpcServer(port int) (*grpcServer, error) {
 	server := new(grpcServer)
+	server.log = helpers.CreateComponentLogger("grpc")
 	server.port = port
 	server.grpcServer = grpc.NewServer()
 
@@ -41,6 +44,7 @@ func newGrpcServer(port int) (*grpcServer, error) {
 			return nil, err
 		}
 	}
+	server.log.Debug("Services are registered")
 
 	return server, nil
 }
@@ -55,10 +59,10 @@ func (s *grpcServer) run() error {
 
 	go func() {
 		if err := s.grpcServer.Serve(listener); err != nil {
-			log.Fatalln(err)
+			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
 		}
 	}()
-	log.Println("Serving gRPC on 0.0.0.0:" + strconv.Itoa(s.port))
+	s.log.WithField("url", ":"+strconv.Itoa(s.port)).Debug("Serving gRPC")
 
 	return nil
 }

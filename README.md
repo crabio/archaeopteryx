@@ -18,6 +18,15 @@ make install
 make generate
 ```
 
+## Presequinces
+
+`archaeopteryx` requires folder for log files.
+To create it run:
+```sh
+sudo mkdir /var/log/archaeopteryx
+sudo chown $USER /var/log/archaeopteryx
+```
+
 ## Run
 
 To run server use
