@@ -1,7 +1,7 @@
 version: 0.0.1
 log:
   level: trace
-  filename: /var/log/archaeopteryx.log
+  filename: /var/log/archaeopteryx/archaeopteryx.log
   maxSizeInMb: 20
   maxAgeInDays: 30
   maxBackups: 30

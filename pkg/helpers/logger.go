@@ -27,7 +27,6 @@ func InitLogger(conf *config.Config) {
 	mw := io.MultiWriter(os.Stdout, rotatedLogFile)
 
 	logrus.SetOutput(mw)
-
 }
 
 func CreateComponentLogger(componentName string) *logrus.Entry {
