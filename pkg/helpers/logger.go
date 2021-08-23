@@ -7,21 +7,22 @@ import (
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/iakrevetkho/archaeopteryx/pkg/config"
+	"github.com/iakrevetkho/woodpecker"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func InitLogger(conf *config.Config) {
 	logrus.SetLevel(conf.Log.Level)
 	logrus.SetFormatter(&nested.Formatter{})
 
-	rotatedLogFile := &lumberjack.Logger{
-		Filename:   conf.Log.Filename,
-		MaxAge:     conf.Log.MaxAgeInDays,
-		MaxSize:    conf.Log.MaxSizeInMb,
-		MaxBackups: conf.Log.MaxBackups,
-		Compress:   conf.Log.Compress,
-	}
+	rotatedLogFile := woodpecker.New(woodpecker.Config{
+		Filename:       conf.Log.Filename,
+		RotateEveryday: true,
+		MaxAgeInDays:   conf.Log.MaxAgeInDays,
+		MaxSizeInMb:    conf.Log.MaxSizeInMb,
+		MaxBackups:     conf.Log.MaxBackups,
+		Compress:       conf.Log.Compress,
+	})
 
 	mw := io.MultiWriter(os.Stdout, rotatedLogFile)
 
