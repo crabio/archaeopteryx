@@ -26,8 +26,10 @@ type Config struct {
 // Load config from environment variables
 // or from [CONFIG_FILE_PATH] file
 // or use default values
-func LoadConfig() *Config {
+func LoadConfig() (*Config, error) {
 	config := new(Config)
-	configor.Load(config, CONFIG_FILE_PATH)
-	return config
+	if err := configor.Load(config, CONFIG_FILE_PATH); err != nil {
+		return nil, err
+	}
+	return config, nil
 }
