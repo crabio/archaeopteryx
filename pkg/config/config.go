@@ -28,6 +28,6 @@ type Config struct {
 // or use default values
 func LoadConfig() *Config {
 	config := new(Config)
-	configor.Load(&config, CONFIG_FILE_PATH)
+	configor.Load(config, CONFIG_FILE_PATH)
 	return config
 }
