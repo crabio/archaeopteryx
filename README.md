@@ -36,6 +36,10 @@ go run .
 
 ## Test
 
+### gRPC
+
+For testing gRPC API use [Kreya](https://kreya.app/)
+
 ### gRPC gateway
 
 #### Hello world
