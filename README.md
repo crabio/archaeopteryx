@@ -40,6 +40,8 @@ go run .
 
 For testing gRPC API use [Kreya](https://kreya.app/)
 
+Folder `kreya` contains Kreya project for working with the project.
+
 ### gRPC gateway
 
 #### Hello world
