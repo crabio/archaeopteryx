@@ -30,7 +30,6 @@ install:
 
 generate:
 	@echo "Generate proto"
-	go mod tidy
 	buf mod update
 	buf generate
 

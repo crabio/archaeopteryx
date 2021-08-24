@@ -1,13 +1,13 @@
 version: v1beta1
 plugins:
   - name: go
-    out: proto
+    out: proto/gen/go
     opt: paths=source_relative
   - name: go-grpc
-    out: proto
+    out: proto/gen/grpc
     opt: paths=source_relative
   - name: grpc-gateway
-    out: proto
+    out: proto/gen/grpc-gateway
     opt: paths=source_relative
   # Swagger docs
   - name: openapiv2

@@ -31,7 +31,7 @@ func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Contro
 	server.checker = controllers.HealthChecker
 
 	// Attach the Healthcheck service to the server
-	healthcheck_v1.RegisterHealthCheckServiceServer(s, &HealthcheckServiceServer{})
+	healthcheck_v1.RegisterHealthCheckServiceServer(s, server)
 	server.log.Debug("Service registered")
 
 	return nil

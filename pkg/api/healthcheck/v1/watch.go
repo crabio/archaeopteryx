@@ -23,6 +23,7 @@ func (s *HealthcheckServiceServer) Watch(request *healthcheck_v1.WatchRequest, s
 			},
 		}
 		if err := stream.Send(response); err != nil {
+			s.log.WithError(err).Trace("Stop watch")
 			return err
 		}
 		s.log.WithField("response", response.String()).Trace("Watch response")

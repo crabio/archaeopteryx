@@ -25,7 +25,7 @@ func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Contro
 	server.log = helpers.CreateComponentLogger("grpc-hello-world-v1")
 
 	// Attach the Hello service to the server
-	hello_world_v1.RegisterHelloServiceServer(s, &HelloServiceServer{})
+	hello_world_v1.RegisterHelloServiceServer(s, server)
 	server.log.Debug("Service registered")
 
 	return nil
