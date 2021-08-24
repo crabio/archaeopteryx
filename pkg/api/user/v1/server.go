@@ -11,7 +11,7 @@ import (
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	user_v1 "github.com/iakrevetkho/archaeopteryx/proto/user/v1"
+	user_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/user/v1"
 )
 
 type UserServiceServer struct {

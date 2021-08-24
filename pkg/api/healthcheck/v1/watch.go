@@ -6,7 +6,7 @@ import (
 	"time"
 
 	// Internal
-	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/healthcheck/v1"
+	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/healthcheck/v1"
 )
 
 func (s *HealthcheckServiceServer) Watch(request *healthcheck_v1.WatchRequest, stream healthcheck_v1.HealthCheckService_WatchServer) error {

@@ -11,7 +11,7 @@ import (
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/healthcheck/v1"
+	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/healthcheck/v1"
 )
 
 const (

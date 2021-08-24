@@ -8,7 +8,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 
 	// Internal
-	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/healthcheck/v1"
+	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/healthcheck/v1"
 )
 
 func (s *HealthcheckServiceServer) getHealthStatus(ctx context.Context) (healthcheck_v1.HealthCheckResponse_ServingStatus, string) {
