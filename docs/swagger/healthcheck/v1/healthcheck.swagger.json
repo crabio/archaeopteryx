@@ -6,7 +6,7 @@
   },
   "tags": [
     {
-      "name": "HealthCheck"
+      "name": "HealthCheckService"
     }
   ],
   "consumes": [
@@ -20,12 +20,12 @@
     "HealthCheckResponseServingStatus": {
       "type": "string",
       "enum": [
-        "UNKNOWN",
-        "SERVING",
-        "NOT_SERVING",
-        "SERVICE_UNKNOWN"
+        "SERVING_STATUS_UNKNOWN_UNSPECIFIED",
+        "SERVING_STATUS_SERVING",
+        "SERVING_STATUS_NOT_SERVING",
+        "SERVING_STATUS_SERVICE_UNKNOWN"
       ],
-      "default": "UNKNOWN"
+      "default": "SERVING_STATUS_UNKNOWN_UNSPECIFIED"
     },
     "protobufAny": {
       "type": "object",
@@ -57,6 +57,14 @@
         }
       }
     },
+    "v1CheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1HealthCheckResponse"
+        }
+      }
+    },
     "v1HealthCheckResponse": {
       "type": "object",
       "properties": {
@@ -65,6 +73,14 @@
         },
         "details": {
           "type": "string"
+        }
+      }
+    },
+    "v1WatchResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1HealthCheckResponse"
         }
       }
     }

@@ -1,4 +1,4 @@
-package healthcheck
+package healthchecker
 
 import (
 	// External
@@ -8,7 +8,7 @@ import (
 	"github.com/alexliesenfeld/health"
 )
 
-func New() *health.Checker {
+func New() health.Checker {
 	// Create a new Checker.
 	checker := health.NewChecker(
 
@@ -18,5 +18,5 @@ func New() *health.Checker {
 		// Configure a global timeout that will be applied to all checks.
 		health.WithTimeout(10*time.Second),
 	)
-	return &checker
+	return checker
 }

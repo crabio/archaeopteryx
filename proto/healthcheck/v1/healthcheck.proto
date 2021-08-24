@@ -3,10 +3,26 @@ syntax = "proto3";
 package healthcheck.v1;
 option go_package = "github.com/iakrevetkho/archaeopteryx;healthcheck";
 
-service HealthCheck {
-  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+service HealthCheckService {
+  rpc Check(CheckRequest) returns (CheckResponse);
 
-  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+  rpc Watch(WatchRequest) returns (stream WatchResponse);
+}
+
+message CheckRequest {
+  string service = 1;
+}
+
+message CheckResponse {
+  HealthCheckResponse status = 1;
+}
+
+message WatchRequest {
+  string service = 1;
+}
+
+message WatchResponse {
+  HealthCheckResponse status = 1;
 }
 
 message HealthCheckRequest {
@@ -15,10 +31,10 @@ message HealthCheckRequest {
 
 message HealthCheckResponse {
   enum ServingStatus {
-    UNKNOWN = 0;
-    SERVING = 1;
-    NOT_SERVING = 2;
-    SERVICE_UNKNOWN = 3;  // Used only by the Watch method.
+    SERVING_STATUS_UNKNOWN_UNSPECIFIED = 0;
+    SERVING_STATUS_SERVING = 1;
+    SERVING_STATUS_NOT_SERVING = 2;
+    SERVING_STATUS_SERVICE_UNKNOWN = 3;  // Used only by the Watch method.
   }
   ServingStatus status = 1;
   string details = 2;
