@@ -18,5 +18,7 @@ func New() health.Checker {
 		// Configure a global timeout that will be applied to all checks.
 		health.WithTimeout(10*time.Second),
 	)
+	checker.Start()
+
 	return checker
 }
