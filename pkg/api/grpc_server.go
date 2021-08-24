@@ -10,7 +10,7 @@ import (
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	api_healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/healthcheck/v1"
+	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
 	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
@@ -21,7 +21,7 @@ var (
 	// List with all service registars.
 	// If you add new service, you need to add registrar here.
 	grpcServicesRegistrars = []func(grpc.ServiceRegistrar, *api_data.Controllers) error{
-		api_healthcheck_v1.RegisterServiceServer,
+		api_health_v1.RegisterServiceServer,
 		api_hello_world_v1.RegisterServiceServer,
 		api_user_v1.RegisterServiceServer,
 		api_user_v2.RegisterServiceServer,
