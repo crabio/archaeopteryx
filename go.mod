@@ -3,6 +3,7 @@ module github.com/iakrevetkho/archaeopteryx
 go 1.16
 
 require (
+	github.com/alexliesenfeld/health v0.6.0
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0
 	github.com/iakrevetkho/woodpecker v1.0.0
