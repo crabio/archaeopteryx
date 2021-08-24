@@ -2,6 +2,8 @@ package api_healthcheck_v1
 
 import (
 	// External
+	"time"
+
 	"github.com/alexliesenfeld/health"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -10,6 +12,10 @@ import (
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/healthcheck/v1"
+)
+
+const (
+	watchUpdatePeriod = time.Second * 15
 )
 
 type HealthcheckServiceServer struct {

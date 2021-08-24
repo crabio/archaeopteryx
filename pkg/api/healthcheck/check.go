@@ -1,15 +1,14 @@
 package api_healthcheck_v1
 
 import (
+	// External
 	"context"
-
-	"github.com/alexliesenfeld/health"
-	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	// Internal
 	healthcheck_v1 "github.com/iakrevetkho/archaeopteryx/proto/healthcheck/v1"
 )
 
-func (s *HealthcheckServiceServer) SayHello(ctx context.Context, request *healthcheck_v1.CheckRequest) (*healthcheck_v1.CheckResponse, error) {
-	s.log.WithField("request", request.String()).Trace("Health check  request")
+func (s *HealthcheckServiceServer) Check(ctx context.Context, request *healthcheck_v1.CheckRequest) (*healthcheck_v1.CheckResponse, error) {
+	s.log.WithField("request", request.String()).Trace("Check request")
 
 	healthStatus, details := s.getHealthStatus(ctx)
 	response := healthcheck_v1.CheckResponse{
@@ -18,22 +17,7 @@ func (s *HealthcheckServiceServer) SayHello(ctx context.Context, request *health
 			Details: details,
 		},
 	}
-	s.log.WithField("response", response.String()).Trace("Health check response")
+	s.log.WithField("response", response.String()).Trace("Check response")
 
 	return &response, nil
-}
-
-func (s *HealthcheckServiceServer) getHealthStatus(ctx context.Context) (healthcheck_v1.HealthCheckResponse_ServingStatus, string) {
-	status := s.checker.Check(ctx)
-
-	if status.Status == health.StatusUp {
-		return healthcheck_v1.HealthCheckResponse_SERVING_STATUS_SERVING, ""
-	} else {
-		// Get details
-		if status.Details != nil {
-			return healthcheck_v1.HealthCheckResponse_SERVING_STATUS_NOT_SERVING, helpers.MustMarshal(status.Details)
-		} else {
-			return healthcheck_v1.HealthCheckResponse_SERVING_STATUS_NOT_SERVING, ""
-		}
-	}
 }
