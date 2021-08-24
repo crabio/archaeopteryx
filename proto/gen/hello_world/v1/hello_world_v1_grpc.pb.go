@@ -97,5 +97,5 @@ var HelloService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "hello_world/v1/hello_world.proto",
+	Metadata: "hello_world/v1/hello_world_v1.proto",
 }

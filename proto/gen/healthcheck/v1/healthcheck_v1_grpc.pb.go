@@ -161,5 +161,5 @@ var HealthCheckService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "healthcheck/v1/healthcheck.proto",
+	Metadata: "healthcheck/v1/healthcheck_v1.proto",
 }
