@@ -1,4 +1,4 @@
-# archaeopteryx
+# archaeopteryx_boilerplate
 This project is a prototype for microservice on Golang with all required dependencies
 
 ## Structure

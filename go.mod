@@ -1,4 +1,4 @@
-module github.com/iakrevetkho/archaeopteryx
+module github.com/iakrevetkho/archaeopteryx/example
 
 go 1.16
 

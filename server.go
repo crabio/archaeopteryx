@@ -18,15 +18,15 @@ import (
 type Server struct {
 	Config *config.Config
 
-	log             *logrus.Entry
-	controllers     *api_data.Controllers
-	grpcServer      *grpcServer
-	grpcProxyServer *grpcProxyServer
+	log         *logrus.Entry
+	controllers *api_data.Controllers
+
+	externalGrpcServicesRegistrars      []ExternalGrpcServiceRegistrar
+	externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar
+	externalControllers                 interface{}
 }
 
-func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcServiceRegistrar, externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) (*Server, error) {
-	var err error
-
+func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcServiceRegistrar, externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) *Server {
 	s := new(Server)
 
 	helpers.InitLogger(config)
@@ -36,23 +36,30 @@ func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcSer
 	s.Config = config
 	s.controllers = new(api_data.Controllers)
 	s.controllers.HealthChecker = healthchecker.New()
-	s.grpcServer, err = newGrpcServer(s.Config.GrpcPort, s.controllers, externalGrpcServicesRegistrars, externalControllers)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
-	}
-	s.grpcProxyServer, err = newGrpcProxyServer(s.Config.GrpcGatewayPort, s.grpcServer, s.controllers, externalGrpcProxyServicesRegistrars, externalControllers)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
-	}
 
-	return s, nil
+	s.externalGrpcServicesRegistrars = externalGrpcServicesRegistrars
+	s.externalGrpcProxyServicesRegistrars = externalGrpcProxyServicesRegistrars
+	s.externalControllers = externalControllers
+
+	return s
 }
 
 func (s *Server) Run() error {
-	if err := s.grpcServer.run(); err != nil {
+	grpcServer, err := newGrpcServer(s.Config.GrpcPort, s.controllers, s.externalGrpcServicesRegistrars, s.externalControllers)
+	if err != nil {
+		return fmt.Errorf("couldn't create gRPC server. " + err.Error())
+	}
+	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
+	if err := grpcServer.run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
-	if err := s.grpcProxyServer.run(); err != nil {
+
+	grpcProxyServer, err := newGrpcProxyServer(s.Config.GrpcGatewayPort, grpcServer, s.controllers, s.externalGrpcProxyServicesRegistrars, s.externalControllers)
+	if err != nil {
+		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
+	}
+
+	if err := grpcProxyServer.run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC proxy server. " + err.Error())
 	}
 
