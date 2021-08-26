@@ -10,16 +10,16 @@ import (
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	api_health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
 )
 
-type internalGrpcServiceRegistrar func(registrar grpc.ServiceRegistrar, controllers *api_data.Controllers) error
-type ExternalGrpcServiceRegistrar func(externalRegistrar grpc.ServiceRegistrar, externalControllers interface{}) error
+type internalGrpcServiceRegistrar func(registrar grpc.ServiceRegistrar) error
+type ExternalGrpcServiceRegistrar func(externalRegistrar grpc.ServiceRegistrar) error
 
 var (
 	internalGrpcServicesRegistrars = []internalGrpcServiceRegistrar{
-		api_health_v1.RegisterServiceServer,
+		api_health_v1.RegisterHealthServer,
 	}
 )
 

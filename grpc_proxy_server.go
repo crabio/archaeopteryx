@@ -13,16 +13,16 @@ import (
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	api_health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
 )
 
-type internalGrpcProxyServiceRegistrar func(router *runtime.ServeMux, conn *grpc.ClientConn, controllers *api_data.Controllers) error
-type ExternalGrpcProxyServiceRegistrar func(router *runtime.ServeMux, conn *grpc.ClientConn, externalControllers interface{}) error
+type internalGrpcProxyServiceRegistrar func(ctx context.Context, router *runtime.ServeMux, conn *grpc.ClientConn) error
+type ExternalGrpcProxyServiceRegistrar func(ctx context.Context, router *runtime.ServeMux, conn *grpc.ClientConn, externalControllers interface{}) error
 
 var (
 	internalGrpcProxyServicesRegistrars = []internalGrpcProxyServiceRegistrar{
-		api_health_v1.RegisterProxyServiceServer,
+		api_health_v1.RegisterHealthHandler,
 	}
 )
 
