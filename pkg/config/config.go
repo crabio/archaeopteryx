@@ -1,15 +1,14 @@
 package config
 
 import (
-	// External
-	"github.com/jinzhu/configor"
 	"github.com/sirupsen/logrus"
 )
 
-const CONFIG_FILE_PATH = "config.yml"
-
 type Config struct {
 	Version string `default:"" env:"VERSION"`
+
+	GrpcPort        int `default:"8080" env:"GRPC_PORT"`
+	GrpcGatewayPort int `default:"8090" env:"GRPC_GATEWAY_PORT"`
 
 	Log struct {
 		Level    logrus.Level `default:"info" env:"LOG_LEVEL"`
@@ -21,15 +20,4 @@ type Config struct {
 		MaxBackups   int  `default:"30" env:"LOG_MAX_BACKUPS"`
 		Compress     bool `default:"true" env:"LOG_COMPRESS_OLD_FILES"`
 	}
-}
-
-// Load config from environment variables
-// or from [CONFIG_FILE_PATH] file
-// or use default values
-func LoadConfig() (*Config, error) {
-	config := new(Config)
-	if err := configor.Load(config, CONFIG_FILE_PATH); err != nil {
-		return nil, err
-	}
-	return config, nil
 }

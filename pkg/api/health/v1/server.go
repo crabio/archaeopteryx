@@ -2,9 +2,11 @@ package api_health_v1
 
 import (
 	// External
+	"context"
 	"time"
 
 	"github.com/alexliesenfeld/health"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
@@ -33,6 +35,15 @@ func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Contro
 	// Attach the Health service to the server
 	health_v1.RegisterHealthServer(s, server)
 	server.log.Debug("Service registered")
+
+	return nil
+}
+
+func RegisterProxyServiceServer(mux *runtime.ServeMux, conn *grpc.ClientConn, controllers *api_data.Controllers) error {
+	// Attach handler to global handler
+	if err := health_v1.RegisterHealthHandler(context.Background(), mux, conn); err != nil {
+		return err
+	}
 
 	return nil
 }
