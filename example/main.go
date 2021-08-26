@@ -1,41 +1,47 @@
-package main
+package example
 
 import (
 	// External
 
-	"os"
-	"os/signal"
-	"syscall"
-
+	"github.com/jinzhu/configor"
 	"github.com/sirupsen/logrus"
 
 	// Internal
-	"github.com/iakrevetkho/archaeopteryx/pkg/api"
+	"github.com/iakrevetkho/archaeopteryx"
+	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/example/pkg/api/hello_world/v1"
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	"github.com/iakrevetkho/archaeopteryx/pkg/config"
-	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
-	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/pkg/config"
+)
+
+var (
+	externalGrpcServicesRegistrars = []archaeopteryx.ExternalGrpcServiceRegistrar{
+		api_hello_world_v1.RegisterServiceServer,
+	}
+	externalGrpcProxyServicesRegistrars = []archaeopteryx.ExternalGrpcProxyServiceRegistrar{
+		api_hello_world_v1.RegisterProxyServiceServer,
+	}
 )
 
 func main() {
-	conf, err := config.LoadConfig()
-	if err != nil {
-		logrus.WithError(err).Fatal("couldn't init config")
+	log := logrus.WithField("component", "main")
+
+	// Init archeopteryx config
+	conf := new(archaeopteryx_config.Config)
+	if err := configor.Load(conf, "config.yml"); err != nil {
+		log.WithError(err).Fatal("couldn't init config")
 	}
 
-	helpers.InitLogger(conf)
-	log := helpers.CreateComponentLogger("main")
-	log.WithField("config", helpers.MustMarshal(conf)).Info("Config is inited")
+	// Init your controller
+	controllers := api_data.Controllers{}
 
-	// Init controllers
-	controllers := new(api_data.Controllers)
-	controllers.HealthChecker = healthchecker.New()
+	// Create archeopteryx server
+	server, err := archaeopteryx.New(conf, externalGrpcServicesRegistrars, externalGrpcProxyServicesRegistrars, controllers)
+	if err != nil {
+		log.WithError(err).Fatal("couldn't init server")
+	}
 
-	// Run API server
-	api.RunServer(controllers)
-
-	log.Info("Wait exit signal")
-	quitSignal := make(chan os.Signal, 1)
-	signal.Notify(quitSignal, syscall.SIGINT, syscall.SIGTERM)
-	<-quitSignal
+	// Run archeopteryx server
+	if err := server.Run(); err != nil {
+		log.WithError(err).Fatal("couldn't run server")
+	}
 }

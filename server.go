@@ -3,16 +3,22 @@ package archaeopteryx
 import (
 	// External
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/config"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
-	Config          *config.Config
+	Config *config.Config
+
+	log             *logrus.Entry
 	controllers     *api_data.Controllers
 	grpcServer      *grpcServer
 	grpcProxyServer *grpcProxyServer
@@ -21,11 +27,12 @@ type Server struct {
 func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcServiceRegistrar, externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) (*Server, error) {
 	var err error
 
-	helpers.InitLogger(config)
-	log := helpers.CreateComponentLogger("server")
-	log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
-
 	s := new(Server)
+
+	helpers.InitLogger(config)
+	s.log = helpers.CreateComponentLogger("server")
+	s.log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
+
 	s.Config = config
 	s.controllers = new(api_data.Controllers)
 	s.controllers.HealthChecker = healthchecker.New()
@@ -48,6 +55,11 @@ func (s *Server) Run() error {
 	if err := s.grpcProxyServer.run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC proxy server. " + err.Error())
 	}
+
+	s.log.Info("Wait exit signal")
+	quitSignal := make(chan os.Signal, 1)
+	signal.Notify(quitSignal, syscall.SIGINT, syscall.SIGTERM)
+	<-quitSignal
 
 	return nil
 }
