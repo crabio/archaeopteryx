@@ -30,7 +30,6 @@ install:
 
 generate:
 	@echo "Generate proto"
-	go mod tidy
 	buf mod update
 	buf generate
 
@@ -48,3 +47,11 @@ test:
 run:
 	@echo "Run app"
 	go run .
+
+build_docker:
+	@echo "Build docker image"
+	docker build . --file Dockerfile --tag archaeopteryx
+
+run_docker:
+	@echo "Run app in docker"
+	docker run -p 8080:8080 -e LOG_LEVEL=trace  archaeopteryx

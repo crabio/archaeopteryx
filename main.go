@@ -11,7 +11,9 @@ import (
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/pkg/api"
+	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/config"
+	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
@@ -25,7 +27,12 @@ func main() {
 	log := helpers.CreateComponentLogger("main")
 	log.WithField("config", helpers.MustMarshal(conf)).Info("Config is inited")
 
-	api.RunServer()
+	// Init controllers
+	controllers := new(api_data.Controllers)
+	controllers.HealthChecker = healthchecker.New()
+
+	// Run API server
+	api.RunServer(controllers)
 
 	log.Info("Wait exit signal")
 	quitSignal := make(chan os.Signal, 1)

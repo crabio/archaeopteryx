@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc"
 
 	// Internal
+	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
+	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/hello_world/v1"
 	api_user_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v1"
 	api_user_v2 "github.com/iakrevetkho/archaeopteryx/pkg/api/user/v2"
@@ -18,7 +20,8 @@ import (
 var (
 	// List with all service registars.
 	// If you add new service, you need to add registrar here.
-	grpcServicesRegistrars = []func(grpc.ServiceRegistrar) error{
+	grpcServicesRegistrars = []func(grpc.ServiceRegistrar, *api_data.Controllers) error{
+		api_health_v1.RegisterServiceServer,
 		api_hello_world_v1.RegisterServiceServer,
 		api_user_v1.RegisterServiceServer,
 		api_user_v2.RegisterServiceServer,
@@ -32,7 +35,7 @@ type grpcServer struct {
 }
 
 // Function creates gRPC server on the [port]
-func newGrpcServer(port int) (*grpcServer, error) {
+func newGrpcServer(port int, controllers *api_data.Controllers) (*grpcServer, error) {
 	server := new(grpcServer)
 	server.log = helpers.CreateComponentLogger("grpc")
 	server.port = port
@@ -40,7 +43,7 @@ func newGrpcServer(port int) (*grpcServer, error) {
 
 	// Register service routes
 	for _, serviceRestrar := range grpcServicesRegistrars {
-		if err := serviceRestrar(server.grpcServer); err != nil {
+		if err := serviceRestrar(server.grpcServer, controllers); err != nil {
 			return nil, err
 		}
 	}

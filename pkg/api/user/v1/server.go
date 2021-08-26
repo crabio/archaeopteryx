@@ -9,8 +9,9 @@ import (
 	"google.golang.org/grpc"
 
 	// Internal
+	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	user_v1 "github.com/iakrevetkho/archaeopteryx/proto/user/v1"
+	user_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/user/v1"
 )
 
 type UserServiceServer struct {
@@ -19,7 +20,7 @@ type UserServiceServer struct {
 	user_v1.UnimplementedUserServiceServer
 }
 
-func RegisterServiceServer(s grpc.ServiceRegistrar) error {
+func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Controllers) error {
 	server := new(UserServiceServer)
 	server.log = helpers.CreateComponentLogger("grpc-user-v1")
 

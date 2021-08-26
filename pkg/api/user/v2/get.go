@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	// Internal
-	user_v2 "github.com/iakrevetkho/archaeopteryx/proto/user/v2"
+	user_v2 "github.com/iakrevetkho/archaeopteryx/proto/gen/user/v2"
 )
 
 var (
