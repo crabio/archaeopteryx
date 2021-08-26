@@ -1,6 +1,6 @@
 {
   "details": {
-    "methodFqn": "health.v1.Health.Check"
+    "methodFqn": "grpc.health.v1.Health.Check"
   },
   "requests": [
     {

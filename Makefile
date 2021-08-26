@@ -44,6 +44,10 @@ test:
 	@echo "Run unit tests"
 	go test -v ./...
 
+build_docker:
+	@echo "Build docker image"
+	docker build . --file Dockerfile --tag archaeopteryx
+
 run:
 	@echo "Run app"
 	go run .
