@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "health.v1.Health.Watch"
+  },
+  "requests": [
+    {
+      "location": "Watch-request.json"
+    }
+  ],
+  "operationType": "serverStreaming",
+  "invokerName": "grpc"
+}

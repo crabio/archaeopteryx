@@ -22,7 +22,8 @@
       "enum": [
         "UNKNOWN",
         "SERVING",
-        "NOT_SERVING"
+        "NOT_SERVING",
+        "SERVICE_UNKNOWN"
       ],
       "default": "UNKNOWN"
     },
