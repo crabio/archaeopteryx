@@ -27,14 +27,46 @@ sudo mkdir /var/log/archaeopteryx
 sudo chown $USER /var/log/archaeopteryx
 ```
 
+## Build
+
+### Docker
+
+To build docker image use:
+```sh
+make build_docker
+```
+
 ## Run
 
-To run server use
+### Binary
+
+To run server use:
 ```sh
-go run .
+make run
+```
+
+### Docker
+
+To run server in docker use:
+```sh
+make run_docker
 ```
 
 ## Test
+
+### Unit test
+
+For unit tests use:
+```sh
+make test
+```
+
+### Lint
+
+For lint use:
+```sh
+make lint
+```
 
 ### gRPC
 

@@ -44,10 +44,14 @@ test:
 	@echo "Run unit tests"
 	go test -v ./...
 
+run:
+	@echo "Run app"
+	go run .
+
 build_docker:
 	@echo "Build docker image"
 	docker build . --file Dockerfile --tag archaeopteryx
 
-run:
-	@echo "Run app"
-	go run .
+run_docker:
+	@echo "Run app in docker"
+	docker run -p 8080:8080 -e LOG_LEVEL=trace  archaeopteryx
