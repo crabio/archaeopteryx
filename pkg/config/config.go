@@ -11,6 +11,9 @@ const CONFIG_FILE_PATH = "config.yml"
 type Config struct {
 	Version string `default:"" env:"VERSION"`
 
+	GrpcPort        int `default:"1000" env:"GRPC_PORT"`
+	GrpcGatewayPort int `default:"1000" env:"GRPC_GATEWAY_PORT"`
+
 	Log struct {
 		Level    logrus.Level `default:"info" env:"LOG_LEVEL"`
 		Filename string       `default:"/var/log/archaeopteryx/archaeopteryx.log" env:"LOG_FILE_NAME"`
