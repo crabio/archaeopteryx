@@ -41,4 +41,6 @@ lint:
 
 test:
 	@echo "Run unit tests"
-	go test -v ./...
+	go test -v ./... -coverprofile coverage.out
+	@echo "Code coverage"
+	go tool cover -func coverage.out
