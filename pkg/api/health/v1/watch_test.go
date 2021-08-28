@@ -43,21 +43,19 @@ func TestWatch(t *testing.T) {
 
 	s := api_health_v1.New(c)
 
-	requests := []health_v1.HealthCheckRequest{
-		{},
-		{Service: ""},
-		{Service: "main"},
-	}
+	testWatch(t, s, &health_v1.HealthCheckRequest{})
+	testWatch(t, s, &health_v1.HealthCheckRequest{Service: ""})
+	testWatch(t, s, &health_v1.HealthCheckRequest{Service: "main"})
+}
 
-	for _, request := range requests {
-		mockWatchServer := MockhWatchServer{}
+func testWatch(t *testing.T, s *api_health_v1.HealthServiceServer, r *health_v1.HealthCheckRequest) {
+	mockWatchServer := MockhWatchServer{}
 
-		go func() {
-			assert.NoError(t, s.Watch(&request, &mockWatchServer))
-		}()
+	go func() {
+		assert.NoError(t, s.Watch(r, &mockWatchServer))
+	}()
 
-		time.Sleep(time.Millisecond * 250)
+	time.Sleep(time.Millisecond * 250)
 
-		assert.Equal(t, uint32(3), mockWatchServer.MsgCount)
-	}
+	assert.Equal(t, uint32(3), mockWatchServer.MsgCount)
 }

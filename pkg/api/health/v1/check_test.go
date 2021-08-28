@@ -19,16 +19,14 @@ func TestCheck(t *testing.T) {
 	c.HealthChecker = healthchecker.New()
 	s := api_health_v1.New(c)
 
-	requests := []health_v1.HealthCheckRequest{
-		{},
-		{Service: ""},
-		{Service: "main"},
-	}
+	testCheck(t, s, &health_v1.HealthCheckRequest{})
+	testCheck(t, s, &health_v1.HealthCheckRequest{Service: ""})
+	testCheck(t, s, &health_v1.HealthCheckRequest{Service: "main"})
+}
 
-	for _, request := range requests {
-		response, err := s.Check(context.Background(), &request)
+func testCheck(t *testing.T, s *api_health_v1.HealthServiceServer, r *health_v1.HealthCheckRequest) {
+	response, err := s.Check(context.Background(), r)
 
-		assert.NoError(t, err)
-		assert.Equal(t, response.Status, health_v1.HealthCheckResponse_SERVING)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, response.Status, health_v1.HealthCheckResponse_SERVING)
 }
