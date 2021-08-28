@@ -1,5 +1,9 @@
 name: Go
-on: [push]
+
+on:
+  push:
+  pull_request:
+
 jobs:
   test:
     name: Test
@@ -11,8 +15,16 @@ jobs:
       uses: actions/checkout@v1
     - name: Install tools
       run: make install
-    - name: Lint
+    - name: Test
       run: make test
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.txt
+        flags: unittests
+        fail_ci_if_error: true
+        verbose: true
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -39,14 +51,3 @@ jobs:
       run: make generate
     - name: Check for a diff
       run: git diff --exit-code
-  build:
-    # Run after lint and generate jobs
-    needs: [ test, lint, generate ]
-    name: Build
-    runs-on: ubuntu-latest
-    container: golang:latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v1
-    - name: Build
-      run: go build -v ./...

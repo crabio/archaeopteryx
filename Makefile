@@ -6,7 +6,6 @@ help:
 	@echo " generate - generate proto files"
 	@echo " lint - run linter"
 	@echo " test - run unit tests"
-	@echo " run - run application"
 
 install:
 	@echo "Install Buf generators"
@@ -30,7 +29,6 @@ install:
 
 generate:
 	@echo "Generate proto"
-	go mod tidy
 	buf mod update
 	buf generate
 
@@ -43,8 +41,6 @@ lint:
 
 test:
 	@echo "Run unit tests"
-	go test -v ./...
-
-run:
-	@echo "Run app"
-	go run .
+	go test -v ./... -coverprofile coverage.txt -covermode atomic
+	@echo "Code coverage"
+	go tool cover -func coverage.txt

@@ -1,7 +1,9 @@
 version: v1beta1
 name: buf.build/iakrevetkho/archaeopteryx
-deps:
-  - buf.build/googleapis/googleapis
 build:
   roots:
     - proto
+lint: 
+  ignore:
+    - google
+    - health

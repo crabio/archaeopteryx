@@ -1,0 +1,139 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "health/v1/health_v1.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Health"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/health/check": {
+      "get": {
+        "operationId": "Health_Check",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1HealthCheckResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/health/watch": {
+      "get": {
+        "operationId": "Health_Watch",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1HealthCheckResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1HealthCheckResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Health"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "HealthCheckResponseServingStatus": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SERVING",
+        "NOT_SERVING",
+        "SERVICE_UNKNOWN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1HealthCheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/HealthCheckResponseServingStatus"
+        }
+      }
+    }
+  }
+}
