@@ -2,14 +2,16 @@ package archaeopteryx
 
 import (
 	// External
+
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
 	// Internal
+	"github.com/iakrevetkho/archaeopteryx/config"
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	"github.com/iakrevetkho/archaeopteryx/pkg/config"
+	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/sirupsen/logrus"
@@ -21,31 +23,31 @@ type Server struct {
 	log         *logrus.Entry
 	controllers *api_data.Controllers
 
-	externalGrpcServicesRegistrars      []ExternalGrpcServiceRegistrar
-	externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar
-	externalControllers                 interface{}
+	services []IServiceServer
 }
 
-func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcServiceRegistrar, externalGrpcProxyServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) *Server {
+func New(config *config.Config, externalServices []IServiceServer) *Server {
 	s := new(Server)
 
 	helpers.InitLogger(config)
-	s.log = helpers.CreateComponentLogger("server")
+	s.log = helpers.CreateComponentLogger("archeaopteryx-server")
 	s.log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
 
 	s.Config = config
 	s.controllers = new(api_data.Controllers)
 	s.controllers.HealthChecker = healthchecker.New()
 
-	s.externalGrpcServicesRegistrars = externalGrpcServicesRegistrars
-	s.externalGrpcProxyServicesRegistrars = externalGrpcProxyServicesRegistrars
-	s.externalControllers = externalControllers
+	// Add internal services
+	s.services = append(s.services, api_health_v1.New(s.controllers))
+
+	// Add external services
+	s.services = append(s.services, externalServices...)
 
 	return s
 }
 
 func (s *Server) Run() error {
-	grpcServer, err := newGrpcServer(s.Config.GrpcPort, s.controllers, s.externalGrpcServicesRegistrars, s.externalControllers)
+	grpcServer, err := newGrpcServer(s.Config.GrpcPort, s.controllers, s.services)
 	if err != nil {
 		return fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
@@ -54,7 +56,7 @@ func (s *Server) Run() error {
 		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
 
-	grpcProxyServer, err := newGrpcProxyServer(s.Config.GrpcGatewayPort, grpcServer, s.controllers, s.externalGrpcProxyServicesRegistrars, s.externalControllers)
+	grpcProxyServer, err := newGrpcProxyServer(s.Config.GrpcGatewayPort, grpcServer, s.services)
 	if err != nil {
 		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
 	}

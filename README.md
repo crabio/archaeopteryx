@@ -1,10 +1,66 @@
-# archaeopteryx_boilerplate
+# archaeopteryx
 This project is a prototype for microservice on Golang with all required dependencies
 
-## Structure
+## How to use
 
-* `buf.yaml` - general configuration file for the `buf` generator with paths to `.proto` files
-* `buf.gen.yaml` - configuration file for the `buf` generator for generating different stubs (`gRPC`, `swagger`, `REST`)
+`archaeopteryx` helps you to create service with gRPC, gRPC proxy for REST API and some editional features from the box.
+All features can be found in the list
+
+### Config
+
+Service has configuration, bases on https://github.com/jinzhu/configor.
+Your application should reimplement config of server like:
+```go
+import (
+	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/pkg/config"
+)
+
+type Config struct {
+	archaeopteryx_config.Config
+}
+```
+
+### Logger
+
+Service has methods to create logger:
+```go
+import (
+	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/logger"
+)
+
+func main(){
+    var log logger.Logger
+    log = logger.CreateLogger("main")
+}
+```
+
+All messages will be formatted with component name to make easy search by this name:
+
+![Logs example](docs/img/logs.png)
+
+### Service server interface
+
+All custom services should implements interface `service_server`:
+```go
+// IServiceServer - interface for services servers for archaeopteryx.
+//
+// All services should implements this interface
+// to make possible archaeopteryx registrate services handlers in server
+type IServiceServer interface {
+	// RegisterGrpc - HealthServiceServer's method to registrate gRPC service server handlers
+	RegisterGrpc(sr grpc.ServiceRegistrar) error
+	// RegisterGrpcProxy - HealthServiceServer's method to registrate gRPC proxy service server handlers
+	RegisterGrpcProxy(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error
+}
+```
+
+## Features
+
+* health check bases on https://github.com/grpc/grpc/blob/master/doc/health-checking.md
+* logger with logrus nested formatter (https://github.com/antonfisher/nested-logrus-formatter)
+* logger writes data into the console and file, which is rotated with https://github.com/iakrevetkho/woodpecker
+* config is inited bases on https://github.com/jinzhu/configor
+* server is waiting terminate signals on run
 
 ## Install dependencies
 

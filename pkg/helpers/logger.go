@@ -6,12 +6,10 @@ import (
 	"os"
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
-	"github.com/iakrevetkho/archaeopteryx/pkg/config"
+	"github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/woodpecker"
 	"github.com/sirupsen/logrus"
 )
-
-const LOG_PREFIX = "archeaopteryx"
 
 func InitLogger(conf *config.Config) {
 	logrus.SetLevel(conf.Log.Level)
@@ -32,5 +30,5 @@ func InitLogger(conf *config.Config) {
 }
 
 func CreateComponentLogger(componentName string) *logrus.Entry {
-	return logrus.WithField("component", LOG_PREFIX+"-"+componentName)
+	return logrus.WithField("component", componentName)
 }

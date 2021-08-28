@@ -2,6 +2,7 @@ package api_health_v1
 
 import (
 	// External
+
 	"context"
 	"time"
 
@@ -20,6 +21,8 @@ const (
 	watchUpdatePeriod = time.Second * 15
 )
 
+// HealthServiceServer - service for checking service health.
+// Created bases on https://github.com/grpc/grpc/blob/master/doc/health-checking.md
 type HealthServiceServer struct {
 	log *logrus.Entry
 	// Required to have revese compatability
@@ -27,23 +30,22 @@ type HealthServiceServer struct {
 	checker health.Checker
 }
 
-func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Controllers) error {
+// New - creates new instance of HealthServiceServer
+func New(controllers *api_data.Controllers) *HealthServiceServer {
 	server := new(HealthServiceServer)
 	server.log = helpers.CreateComponentLogger("grpc-healthcheck-v1")
 	server.checker = controllers.HealthChecker
+	return server
+}
 
-	// Attach the Health service to the server
-	health_v1.RegisterHealthServer(s, server)
-	server.log.Debug("Service registered")
-
+// RegisterGrpc - HealthServiceServer's method to registrate gRPC service server handlers
+func (s *HealthServiceServer) RegisterGrpc(sr grpc.ServiceRegistrar) error {
+	health_v1.RegisterHealthServer(sr, s)
+	s.log.Debug("Service registered")
 	return nil
 }
 
-func RegisterProxyServiceServer(mux *runtime.ServeMux, conn *grpc.ClientConn, controllers *api_data.Controllers) error {
-	// Attach handler to global handler
-	if err := health_v1.RegisterHealthHandler(context.Background(), mux, conn); err != nil {
-		return err
-	}
-
-	return nil
+// RegisterGrpcProxy - HealthServiceServer's method to registrate gRPC proxy service server handlers
+func (s *HealthServiceServer) RegisterGrpcProxy(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return health_v1.RegisterHealthHandler(ctx, mux, conn)
 }

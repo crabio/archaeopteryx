@@ -12,18 +12,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	// Internal
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
+
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-)
-
-type internalGrpcProxyServiceRegistrar func(router *runtime.ServeMux, conn *grpc.ClientConn, controllers *api_data.Controllers) error
-type ExternalGrpcProxyServiceRegistrar func(router *runtime.ServeMux, conn *grpc.ClientConn, externalControllers interface{}) error
-
-var (
-	internalGrpcProxyServicesRegistrars = []internalGrpcProxyServiceRegistrar{
-		api_health_v1.RegisterProxyServiceServer,
-	}
 )
 
 type grpcProxyServer struct {
@@ -40,9 +30,9 @@ type grpcProxyServer struct {
 // and proxy them onto gRPC server on [grpcServer] port.
 //
 // Requests from the [port] will be redirected to the [grpcServer] port.
-func newGrpcProxyServer(port int, grpcServer *grpcServer, controllers *api_data.Controllers, externalServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) (*grpcProxyServer, error) {
+func newGrpcProxyServer(port int, grpcServer *grpcServer, services []IServiceServer) (*grpcProxyServer, error) {
 	s := new(grpcProxyServer)
-	s.log = helpers.CreateComponentLogger("grpc-proxy")
+	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
 	s.port = port
 	s.grpcServer = grpcServer
 
@@ -74,19 +64,12 @@ func newGrpcProxyServer(port int, grpcServer *grpcServer, controllers *api_data.
 	)
 
 	// Register internal proxy service routes
-	for _, servicesRegistrar := range internalGrpcProxyServicesRegistrars {
-		if err := servicesRegistrar(mux, s.grpcConn, controllers); err != nil {
+	for _, service := range services {
+		if err := service.RegisterGrpcProxy(context.Background(), mux, s.grpcConn); err != nil {
 			return nil, err
 		}
 	}
-	s.log.Debug("Internal services are registered")
-	// Register internal proxy service routes
-	for _, servicesRegistrar := range externalServicesRegistrars {
-		if err := servicesRegistrar(mux, s.grpcConn, controllers); err != nil {
-			return nil, err
-		}
-	}
-	s.log.Debug("External services are registered")
+	s.log.Debug("Services are registered")
 
 	s.httpServer = &http.Server{
 		Addr:    ":" + strconv.Itoa(s.port),
