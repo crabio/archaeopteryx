@@ -18,16 +18,13 @@ jobs:
     - name: Lint
       run: make test
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: .
-        fail_ci_if_error: true
-        files: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
-        # path_to_write_report: ./coverage/codecov_report.txt
-        verbose: true
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.out
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
   lint:
     name: Lint
     runs-on: ubuntu-latest
