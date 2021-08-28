@@ -1,6 +1,7 @@
 # archaeopteryx
 
 [![codecov](https://codecov.io/gh/iakrevetkho/archaeopteryx/branch/develop/graph/badge.svg?token=3QSO8BJHJA)](https://codecov.io/gh/iakrevetkho/archaeopteryx)
+[![Go Reference](https://pkg.go.dev/badge/github.com/iakrevetkho/archaeopteryx.svg)](https://pkg.go.dev/github.com/iakrevetkho/archaeopteryx)
 
 This project is a prototype for microservice on Golang with all required dependencies
 
