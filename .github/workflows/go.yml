@@ -18,12 +18,7 @@ jobs:
     - name: Lint
       run: make test
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        files: ./coverage.txt
-        flags: unittests
-        fail_ci_if_error: true
-        verbose: true
+      run: bash <(curl -s https://codecov.io/bash)
   lint:
     name: Lint
     runs-on: ubuntu-latest
