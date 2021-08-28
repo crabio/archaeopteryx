@@ -2,8 +2,8 @@ name: Go Package
 
 on:
   push:
-    # tags:
-    #   - 'v*.*.*'
+    tags:
+      - 'v*.*.*'
   
 jobs:
   update:
