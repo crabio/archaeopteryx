@@ -11,16 +11,6 @@ import (
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	api_health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
-)
-
-type internalGrpcServiceRegistrar func(registrar grpc.ServiceRegistrar) error
-type ExternalGrpcServiceRegistrar func(externalRegistrar grpc.ServiceRegistrar) error
-
-var (
-	internalGrpcServicesRegistrars = []internalGrpcServiceRegistrar{
-		api_health_v1.RegisterHealthServer,
-	}
 )
 
 type grpcServer struct {
@@ -30,27 +20,19 @@ type grpcServer struct {
 }
 
 // Function creates gRPC server on the [port]
-func newGrpcServer(port int, controllers *api_data.Controllers, externalServicesRegistrars []ExternalGrpcServiceRegistrar, externalControllers interface{}) (*grpcServer, error) {
+func newGrpcServer(port int, controllers *api_data.Controllers, services []IServiceServer) (*grpcServer, error) {
 	s := new(grpcServer)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
 	s.port = port
 	s.grpcServer = grpc.NewServer()
 
-	// Register internal service routes
-	for _, serviceRegistrars := range internalGrpcServicesRegistrars {
-		if err := serviceRegistrars(s.grpcServer, controllers); err != nil {
+	// Register service routes
+	for _, service := range services {
+		if err := service.RegisterGrpc(s.grpcServer); err != nil {
 			return nil, err
 		}
 	}
-	s.log.Debug("Internal services are registered")
-
-	// Register external service routes
-	for _, serviceRegistrars := range externalServicesRegistrars {
-		if err := serviceRegistrars(s.grpcServer, externalControllers); err != nil {
-			return nil, err
-		}
-	}
-	s.log.Debug("External services are registered")
+	s.log.Debug("Services are registered")
 
 	return s, nil
 }
