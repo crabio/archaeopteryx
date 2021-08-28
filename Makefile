@@ -43,4 +43,4 @@ test:
 	@echo "Run unit tests"
 	go test -v ./... -coverprofile coverage.txt -covermode atomic
 	@echo "Code coverage"
-	go tool cover -func coverage.out
+	go tool cover -func coverage.txt
