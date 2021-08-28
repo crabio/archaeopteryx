@@ -15,4 +15,4 @@ jobs:
     - name: Set env.BRANCH
       run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
     - name: Update package version
-      run: curl https://sum.golang.org/lookup/github.com/iakrevetkho/archaeopteryx@${{ env.BRANCH }} || exit 1
+      run: curl --fail https://sum.golang.org/lookup/github.com/iakrevetkho/archaeopteryx@${{ env.BRANCH }}
