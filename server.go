@@ -30,7 +30,7 @@ func New(config *config.Config, externalGrpcServicesRegistrars []ExternalGrpcSer
 	s := new(Server)
 
 	helpers.InitLogger(config)
-	s.log = helpers.CreateComponentLogger("server")
+	s.log = helpers.CreateComponentLogger("archeaopteryx-server")
 	s.log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
 
 	s.Config = config

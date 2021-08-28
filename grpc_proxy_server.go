@@ -42,7 +42,7 @@ type grpcProxyServer struct {
 // Requests from the [port] will be redirected to the [grpcServer] port.
 func newGrpcProxyServer(port int, grpcServer *grpcServer, controllers *api_data.Controllers, externalServicesRegistrars []ExternalGrpcProxyServiceRegistrar, externalControllers interface{}) (*grpcProxyServer, error) {
 	s := new(grpcProxyServer)
-	s.log = helpers.CreateComponentLogger("grpc-proxy")
+	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
 	s.port = port
 	s.grpcServer = grpcServer
 

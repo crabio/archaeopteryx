@@ -11,8 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const LOG_PREFIX = "archeaopteryx"
-
 func InitLogger(conf *config.Config) {
 	logrus.SetLevel(conf.Log.Level)
 	logrus.SetFormatter(&nested.Formatter{})
@@ -32,5 +30,5 @@ func InitLogger(conf *config.Config) {
 }
 
 func CreateComponentLogger(componentName string) *logrus.Entry {
-	return logrus.WithField("component", LOG_PREFIX+"-"+componentName)
+	return logrus.WithField("component", componentName)
 }

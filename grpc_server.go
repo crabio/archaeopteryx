@@ -32,7 +32,7 @@ type grpcServer struct {
 // Function creates gRPC server on the [port]
 func newGrpcServer(port int, controllers *api_data.Controllers, externalServicesRegistrars []ExternalGrpcServiceRegistrar, externalControllers interface{}) (*grpcServer, error) {
 	s := new(grpcServer)
-	s.log = helpers.CreateComponentLogger("grpc")
+	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
 	s.port = port
 	s.grpcServer = grpc.NewServer()
 
