@@ -1,4 +1,7 @@
 # archaeopteryx
+
+[![codecov](https://codecov.io/gh/iakrevetkho/archaeopteryx/branch/develop/graph/badge.svg?token=3QSO8BJHJA)](https://codecov.io/gh/iakrevetkho/archaeopteryx)
+
 This project is a prototype for microservice on Golang with all required dependencies
 
 ## How to use
