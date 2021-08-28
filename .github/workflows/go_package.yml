@@ -1,0 +1,18 @@
+name: Go
+
+on:
+  push:
+    # tags:
+    #   - 'v*.*.*'
+  
+jobs:
+  update:
+    name: Update package info
+    runs-on: ubuntu-latest
+    container:
+      image: golang:latest
+    steps:
+    - name: Set env.BRANCH
+      run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+    - name: Update package via proxy
+      run: GOPROXY=proxy.golang.org go list -m github.com/iakrevetkho/archaeopteryx@${env.BRANCH}
