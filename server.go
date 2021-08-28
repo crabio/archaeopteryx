@@ -9,10 +9,9 @@ import (
 	"syscall"
 
 	// Internal
-
+	"github.com/iakrevetkho/archaeopteryx/config"
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
-	"github.com/iakrevetkho/archaeopteryx/pkg/config"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/sirupsen/logrus"

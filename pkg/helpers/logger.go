@@ -6,7 +6,7 @@ import (
 	"os"
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
-	"github.com/iakrevetkho/archaeopteryx/pkg/config"
+	"github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/woodpecker"
 	"github.com/sirupsen/logrus"
 )

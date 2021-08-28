@@ -1,4 +1,4 @@
-package archaeopteryx
+package logger
 
 import (
 	// External
