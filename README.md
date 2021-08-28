@@ -25,11 +25,12 @@ type Config struct {
 Service has methods to create logger:
 ```go
 import (
+	"github.com/sirupsen/logrus"
 	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/logger"
 )
 
 func main(){
-    var log logger.Logger
+    var log *logrus.Entry
     log = logger.CreateLogger("main")
 }
 ```
