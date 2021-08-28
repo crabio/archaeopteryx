@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,5 +21,10 @@ type Config struct {
 		MaxAgeInDays int  `default:"30" env:"LOG_MAX_AGE_IN_DAYS"`
 		MaxBackups   int  `default:"30" env:"LOG_MAX_BACKUPS"`
 		Compress     bool `default:"true" env:"LOG_COMPRESS_OLD_FILES"`
+	}
+
+	Health struct {
+		// Period for sending healthcheck status on Watch method
+		WatchUpdatePeriod time.Duration `default:"15s" env:"HEALTH_WATCH_UPDATE_PERIOD"`
 	}
 }

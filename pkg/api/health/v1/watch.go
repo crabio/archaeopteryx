@@ -24,6 +24,6 @@ func (s *HealthServiceServer) Watch(request *health_v1.HealthCheckRequest, strea
 		s.log.WithField("response", response.String()).Trace("Watch response")
 
 		// Sleep till next check
-		time.Sleep(watchUpdatePeriod)
+		time.Sleep(s.controllers.Config.Health.WatchUpdatePeriod)
 	}
 }
