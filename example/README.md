@@ -66,6 +66,15 @@ make lint
 
 ### gRPC
 
+#### gRCP Curl
+
+For getting info about method use:
+```sh
+docker run --network="host" fullstorydev/grpcurl -plaintext localhost:8080 describe grpc.health.v1.Health.Check
+```
+
+#### Kreya
+
 For testing gRPC API use [Kreya](https://kreya.app/)
 
 Folder `kreya` contains Kreya project for working with the project.
