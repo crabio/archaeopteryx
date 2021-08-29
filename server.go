@@ -12,6 +12,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/config"
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
+	api_openapi_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/openapi/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/sirupsen/logrus"
@@ -40,6 +41,7 @@ func New(config *config.Config, externalServices []IServiceServer) *Server {
 
 	// Add internal services
 	s.services = append(s.services, api_health_v1.New(s.controllers))
+	s.services = append(s.services, api_openapi_v1.New(s.controllers))
 
 	// Add external services
 	s.services = append(s.services, externalServices...)
