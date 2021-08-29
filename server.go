@@ -35,6 +35,7 @@ func New(config *config.Config, externalServices []IServiceServer) *Server {
 
 	s.Config = config
 	s.controllers = new(api_data.Controllers)
+	s.controllers.Config = config
 	s.controllers.HealthChecker = healthchecker.New()
 
 	// Add internal services
