@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
@@ -33,6 +34,9 @@ func newGrpcServer(port int, controllers *api_data.Controllers, services []IServ
 		}
 	}
 	s.log.Debug("Services are registered")
+
+	reflection.Register(s.grpcServer)
+	s.log.Debug("Reflection service on gRPC server is registered")
 
 	return s, nil
 }
