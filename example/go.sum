@@ -123,6 +123,8 @@ github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/iakrevetkho/archaeopteryx v0.3.3 h1:bp57h3IDWy9k2qWFyCriXNTAqfDhzRkrrH8tH7ueA/M=
 github.com/iakrevetkho/archaeopteryx v0.3.3/go.mod h1:jTwn1Lf74RNp1EgAbIXYx8VgijD2orLrsf3b6cacSyw=
+github.com/iakrevetkho/archaeopteryx v0.3.4-0.20210829070612-4f48faa04b6f h1:Gl2IUHIyhn5/sohifzKTD8WoBhmpuJuOCMpGd+IYUB8=
+github.com/iakrevetkho/archaeopteryx v0.3.4-0.20210829070612-4f48faa04b6f/go.mod h1:jTwn1Lf74RNp1EgAbIXYx8VgijD2orLrsf3b6cacSyw=
 github.com/iakrevetkho/woodpecker v1.0.0 h1:nB4HXnKw2IUyzWwCtZ+1Xyy21xVqrGiCCrf0Z6Pm/34=
 github.com/iakrevetkho/woodpecker v1.0.0/go.mod h1:chTx7Coxb7mOq2+Hw1DNwykiY3/OX0LLUYi/f8JbgXg=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
