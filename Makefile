@@ -51,7 +51,7 @@ build:
 
 run:
 	@echo "Run app"
-	go run -tags=debug .
+	go run .
 
 build_docker:
 	@echo "Build docker image"
