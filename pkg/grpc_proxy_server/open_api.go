@@ -2,14 +2,9 @@ package grpc_proxy_server
 
 import (
 	// External
-
-	"io/fs"
 	"mime"
 	"net/http"
-
 	// Internal
-
-	"github.com/iakrevetkho/archaeopteryx/third_party"
 )
 
 // getOpenApiFilesHandler serves an OpenAPI UI.
@@ -19,11 +14,5 @@ func getOpenApiFilesHandler() (http.Handler, error) {
 		return nil, err
 	}
 
-	// Use subdirectory in embedded files
-	subFS, err := fs.Sub(third_party.OpenAPI, "OpenAPI")
-	if err != nil {
-		panic("couldn't create sub filesystem: " + err.Error())
-	}
-
-	return http.FileServer(http.FS(subFS)), nil
+	return http.FileServer(http.Dir("./docs/swagger")), nil
 }

@@ -2,7 +2,6 @@ package grpc_proxy_server
 
 import (
 	// External
-
 	"os"
 	"path/filepath"
 	"regexp"
@@ -17,13 +16,13 @@ func getOpenAPIFilesPaths() ([]string, error) {
 		return nil, err
 	}
 
-	swaggerDir := "third_party/OpenAPI"
+	swaggerDir := "docs/swagger"
 	err = filepath.Walk(swaggerDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if libRegEx.MatchString(info.Name()) {
-			filesPaths = append(filesPaths, "."+path[len(swaggerDir):])
+			filesPaths = append(filesPaths, path[len(swaggerDir):])
 		}
 		return nil
 	})

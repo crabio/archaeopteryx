@@ -119,7 +119,7 @@ func (ps *Server) getGrpcProxyHandler(mux *runtime.ServeMux) (http.Handler, erro
 		return nil, err
 	}
 
-	oaHomeTmpl, err := template.ParseFiles("third_party/OpenAPI/index.html")
+	oaHomeTmpl, err := template.ParseFiles("./docs/swagger/index.html")
 	if err != nil {
 		return nil, err
 	}
@@ -135,6 +135,7 @@ func (ps *Server) getGrpcProxyHandler(mux *runtime.ServeMux) (http.Handler, erro
 			}
 
 		} else {
+			ps.log.WithField("path", r.URL.Path).Debug("File request")
 			oa.ServeHTTP(w, r)
 		}
 	}), nil
