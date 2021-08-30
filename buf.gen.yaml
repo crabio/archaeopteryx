@@ -11,4 +11,4 @@ plugins:
     opt: paths=source_relative
   # Swagger docs
   - name: openapiv2
-    out: docs/swagger
+    out: third_party/OpenAPI

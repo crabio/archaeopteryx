@@ -2,12 +2,13 @@ package main
 
 import (
 	// External
+
 	"github.com/jinzhu/configor"
 	"github.com/sirupsen/logrus"
 
 	// Internal
-	"github.com/iakrevetkho/archaeopteryx"
 	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/config"
+	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
 func main() {
@@ -20,10 +21,10 @@ func main() {
 	}
 
 	// Init services
-	services := []archaeopteryx.IServiceServer{}
+	services := []service.IServiceServer{}
 
 	// Create archeopteryx server
-	server := archaeopteryx.New(conf, services)
+	server := New(conf, services)
 
 	// Run archeopteryx server
 	log.Info("Run server")

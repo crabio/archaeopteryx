@@ -8,13 +8,13 @@ import "google/api/annotations.proto";
 service Health {
   rpc Check(HealthCheckRequest) returns (HealthCheckResponse) {
     option (google.api.http) = {
-      get: "/v1/health/check"
+      get: "/api/v1/health/check"
     };
   }
 
   rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse) {
     option (google.api.http) = {
-      get: "/v1/health/watch"
+      get: "/api/v1/health/watch"
     };
   }
 }

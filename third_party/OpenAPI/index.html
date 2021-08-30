@@ -33,6 +33,13 @@
   <body>
     <div id="swagger-ui"></div>
 
+    <h1>Available OpenAPIs</h1>
+    <ul>
+      {{range .filePaths}}
+          <li><b>{{ . }}</b></li>
+      {{end}}
+    </ul>
+
     <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>

@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/health/check": {
+    "/api/v1/health/check": {
       "get": {
         "operationId": "Health_Check",
         "responses": {
@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/v1/health/watch": {
+    "/api/v1/health/watch": {
       "get": {
         "operationId": "Health_Watch",
         "responses": {

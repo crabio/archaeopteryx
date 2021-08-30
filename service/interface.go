@@ -1,4 +1,4 @@
-package archaeopteryx
+package service
 
 import (
 	// External
