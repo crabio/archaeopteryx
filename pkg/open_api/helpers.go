@@ -1,4 +1,4 @@
-package grpc_proxy_server
+package open_api
 
 import (
 	// External

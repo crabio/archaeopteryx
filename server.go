@@ -60,7 +60,7 @@ func (s *Server) Run() error {
 		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
 
-	grpcProxyServer, err := grpc_proxy_server.New(s.Config.GrpcGatewayPort, grpcServer, s.services)
+	grpcProxyServer, err := grpc_proxy_server.New(s.Config, grpcServer, s.services)
 	if err != nil {
 		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
 	}

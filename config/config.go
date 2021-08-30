@@ -27,4 +27,8 @@ type Config struct {
 		// Period for sending healthcheck status on Watch method
 		WatchUpdatePeriod time.Duration `default:"15s" env:"HEALTH_WATCH_UPDATE_PERIOD"`
 	}
+
+	Docs struct {
+		SwaggerDir string `default:"docs/swagger" env:"SWAGGER_DIR"`
+	}
 }
