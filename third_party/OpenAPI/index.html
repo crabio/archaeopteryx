@@ -28,25 +28,17 @@
         background: #fafafa;
       }
     </style>
-  </head>
-
-  <body>
-    <div id="swagger-ui"></div>
-
-    <h1>Available OpenAPIs</h1>
-    <ul>
-      {{range .filePaths}}
-          <li><b>{{ . }}</b></li>
-      {{end}}
-    </ul>
-
     <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
     window.onload = function() {
+      goToDoc('{{ index .filePaths 0 }}')
+    }
+
+    function goToDoc(path){
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: "./example.swagger.json",
+        url: path,
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
@@ -59,9 +51,21 @@
         layout: "StandaloneLayout"
       })
       // End Swagger UI call region
-
       window.ui = ui
     }
-  </script>
+    </script>
+  </head>
+
+  <body>
+    <h1></h1>
+    <b>Available OpenAPIs: </b>
+    <select onchange="goToDoc(value)">
+      {{range .filePaths}}
+      <option value="{{ . }}">{{ . }}</option>
+      {{end}}
+    </select>
+    <h1></h1>
+
+    <div id="swagger-ui"></div>
   </body>
 </html>

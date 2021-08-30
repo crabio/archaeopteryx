@@ -131,7 +131,7 @@ func (ps *Server) getGrpcProxyHandler(mux *runtime.ServeMux) (http.Handler, erro
 		if strings.HasPrefix(r.URL.Path, "/api") {
 			mux.ServeHTTP(w, r)
 
-		} else if r.URL.Path == "" {
+		} else if r.URL.Path == "/" {
 			// Open API home page
 			if err := oaHomeTmpl.Execute(w, map[string]interface{}{"filePaths": ps.openApiFilePaths}); err != nil {
 				ps.log.WithError(err).Error("couldn't execute OpenAPI home template")

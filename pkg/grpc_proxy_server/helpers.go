@@ -31,5 +31,11 @@ func getOpenAPIFilesPaths() ([]string, error) {
 		return nil, err
 	}
 
+	// Check if no available files
+	if len(filesPaths) == 0 {
+		// Append empty to have at lease 1 element on html template for default
+		filesPaths = append(filesPaths, "")
+	}
+
 	return filesPaths, nil
 }
