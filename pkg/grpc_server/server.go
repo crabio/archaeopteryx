@@ -1,4 +1,4 @@
-package archaeopteryx
+package grpc_server
 
 import (
 	// External
@@ -7,23 +7,25 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	// Internal
 	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
-type grpcServer struct {
+type Server struct {
 	log        *logrus.Entry
-	port       int
+	Port       int
 	grpcServer *grpc.Server
 }
 
 // Function creates gRPC server on the [port]
-func newGrpcServer(port int, controllers *api_data.Controllers, services []IServiceServer) (*grpcServer, error) {
-	s := new(grpcServer)
+func New(port int, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
+	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
-	s.port = port
+	s.Port = port
 	s.grpcServer = grpc.NewServer()
 
 	// Register service routes
@@ -34,13 +36,16 @@ func newGrpcServer(port int, controllers *api_data.Controllers, services []IServ
 	}
 	s.log.Debug("Services are registered")
 
+	reflection.Register(s.grpcServer)
+	s.log.Debug("Reflection service on gRPC server is registered")
+
 	return s, nil
 }
 
 // Function runs gRPC server on the [port]
-func (s *grpcServer) run() error {
+func (s *Server) Run() error {
 	// Create a listener on TCP port
-	listener, err := net.Listen("tcp", ":"+strconv.Itoa(s.port))
+	listener, err := net.Listen("tcp", ":"+strconv.Itoa(s.Port))
 	if err != nil {
 		return err
 	}
@@ -50,7 +55,7 @@ func (s *grpcServer) run() error {
 			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
 		}
 	}()
-	s.log.WithField("url", ":"+strconv.Itoa(s.port)).Debug("Serving gRPC")
+	s.log.WithField("url", ":"+strconv.Itoa(s.Port)).Debug("Serving gRPC")
 
 	return nil
 }

@@ -44,3 +44,19 @@ test:
 	go test -v ./... -coverprofile coverage.txt -covermode atomic
 	@echo "Code coverage"
 	go tool cover -func coverage.txt
+
+build:
+	@echo "Build app binary"
+	go build
+
+run:
+	@echo "Run app"
+	go run .
+
+build_docker:
+	@echo "Build docker image"
+	docker build . --file Dockerfile --tag archaeopteryx_boilerplate
+
+run_docker:
+	@echo "Run app in docker"
+	docker run -p 8080:8080 -e LOG_LEVEL=trace  archaeopteryx_boilerplate

@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/alexliesenfeld/health v0.6.0
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.5.0
 	github.com/iakrevetkho/woodpecker v1.0.0
 	github.com/jinzhu/configor v1.2.1 // indirect
