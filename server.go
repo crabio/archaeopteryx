@@ -56,20 +56,22 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
 
-	s.grpcProxyServer, err = grpc_proxy_server.New(s.Config, s.grpcServer, s.services)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
-	}
-
 	return s, nil
 }
 
 func (s *Server) Run() error {
+	var err error
+
 	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
 	if err := s.grpcServer.Run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
 
+	// Init gRPC server proxy on run, because it can be inited only with working gRPC server
+	s.grpcProxyServer, err = grpc_proxy_server.New(s.Config, s.grpcServer, s.services)
+	if err != nil {
+		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
+	}
 	if err := s.grpcProxyServer.Run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC proxy server. " + err.Error())
 	}
