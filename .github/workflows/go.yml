@@ -23,7 +23,6 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.txt
         flags: unittests
-        fail_ci_if_error: true
         verbose: true
   lint:
     name: Lint
