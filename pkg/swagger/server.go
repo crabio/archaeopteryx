@@ -31,7 +31,10 @@ func New(config *config.Config) (*Server, error) {
 		return nil, err
 	}
 
-	s.fsHandler = s.createFsHandler()
+	s.fsHandler, err = s.createFsHandler()
+	if err != nil {
+		return nil, err
+	}
 	s.hpHandler, err = s.createHomePageHandler()
 	if err != nil {
 		return nil, err
@@ -42,8 +45,10 @@ func New(config *config.Config) (*Server, error) {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
+		s.log.Println("Serve main page")
 		s.hpHandler.ServeHTTP(w, r)
 	} else {
+		s.log.WithField("path", r.URL.Path).Println("Serve FS")
 		s.fsHandler.ServeHTTP(w, r)
 	}
 }

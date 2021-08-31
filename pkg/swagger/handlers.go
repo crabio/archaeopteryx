@@ -2,6 +2,7 @@ package swagger
 
 import (
 	// External
+	"io/fs"
 	"net/http"
 	"text/template"
 
@@ -10,8 +11,13 @@ import (
 	docs_swagger "github.com/iakrevetkho/archaeopteryx/docs/swagger"
 )
 
-func (s *Server) createFsHandler() http.Handler {
-	return http.FileServer(http.FS(docs.Swagger))
+func (s *Server) createFsHandler() (http.Handler, error) {
+	subFS, err := fs.Sub(docs.Swagger, "swagger")
+	if err != nil {
+		return nil, err
+	}
+
+	return http.FileServer(http.FS(subFS)), nil
 }
 
 func (s *Server) createHomePageHandler() (http.Handler, error) {
