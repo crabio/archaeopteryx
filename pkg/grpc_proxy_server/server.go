@@ -15,7 +15,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	"github.com/iakrevetkho/archaeopteryx/pkg/open_api"
+	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
@@ -25,7 +25,7 @@ type Server struct {
 	grpcServer    *grpc_server.Server
 	grpcConn      *grpc.ClientConn
 	httpServer    *http.Server
-	openApiServer *open_api.Server
+	openApiServer *swagger.Server
 }
 
 // Function creates gRPC server proxy
@@ -39,7 +39,7 @@ func New(config *config.Config, grpcServer *grpc_server.Server, services []servi
 	ps.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
 	ps.Port = config.GrpcGatewayPort
 	ps.grpcServer = grpcServer
-	ps.openApiServer, err = open_api.New(config)
+	ps.openApiServer, err = swagger.New(config)
 	if err != nil {
 		return nil, err
 	}

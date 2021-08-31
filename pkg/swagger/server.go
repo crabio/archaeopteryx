@@ -1,4 +1,4 @@
-package open_api
+package swagger
 
 import (
 	// External

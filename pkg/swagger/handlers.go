@@ -1,9 +1,11 @@
-package open_api
+package swagger
 
 import (
 	// External
 	"net/http"
 	"text/template"
+
+	"github.com/iakrevetkho/archaeopteryx/docs"
 	// Internal
 )
 
@@ -12,17 +14,16 @@ func (s *Server) createFsHandler() http.Handler {
 }
 
 func (s *Server) createHomePageHandler() (http.Handler, error) {
-	filePaths, err := getOpenAPIFilesPaths(s.config.Docs.SwaggerDir)
-	if err != nil {
-		return nil, err
+	swaggerFilePaths := []string{
+		"health/v1/health_v1.swagger.json",
 	}
-	oaHomeTmpl, err := template.ParseFiles(s.config.Docs.SwaggerDir + "/index.html")
+	swaggerHomeTmpl, err := template.ParseFS(docs.Swagger, "index.html")
 	if err != nil {
 		return nil, err
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Open API home page
-		if err := oaHomeTmpl.Execute(w, map[string]interface{}{"filePaths": filePaths}); err != nil {
+		if err := swaggerHomeTmpl.Execute(w, map[string]interface{}{"filePaths": swaggerFilePaths}); err != nil {
 			s.log.WithError(err).Error("couldn't execute OpenAPI home template")
 		}
 	}), nil
