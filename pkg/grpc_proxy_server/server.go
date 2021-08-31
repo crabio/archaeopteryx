@@ -44,6 +44,12 @@ func New(config *config.Config, grpcServer *grpc_server.Server, services []servi
 		return nil, err
 	}
 
+	// Create a client connection to the gRPC server
+	ps.grpcConn, err = ps.createGrpcProxyConnection()
+	if err != nil {
+		return nil, err
+	}
+
 	// Create mux router to route HTTP requests in server
 	mux := createGrpcProxyMuxServer()
 
@@ -95,13 +101,6 @@ func createGrpcProxyMuxServer() *runtime.ServeMux {
 
 // Function runs gRPC proxy server on the [port]
 func (ps *Server) Run() error {
-	var err error
-	// Create a client connection to the gRPC server
-	ps.grpcConn, err = ps.createGrpcProxyConnection()
-	if err != nil {
-		return err
-	}
-
 	go func() {
 		if err := ps.httpServer.ListenAndServe(); err != nil {
 			ps.log.WithError(err).Fatal("Couldn't serve gRPC-Gateway server")

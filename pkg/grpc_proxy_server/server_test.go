@@ -25,6 +25,8 @@ func TestNew(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, grpcs)
 
+	assert.NoError(t, grpcs.Run())
+
 	s, err := grpc_proxy_server.New(c.Config, grpcs, []service.IServiceServer{})
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
