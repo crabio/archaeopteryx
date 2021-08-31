@@ -9,6 +9,7 @@ import (
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
+	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 type Server struct {
@@ -23,6 +24,7 @@ type Server struct {
 func New(config *config.Config) (*Server, error) {
 	var err error
 	s := new(Server)
+	s.log = helpers.CreateComponentLogger("swagger")
 	s.config = config
 
 	if err := mime.AddExtensionType(".svg", "image/svg+xml"); err != nil {

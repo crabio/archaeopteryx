@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/iakrevetkho/archaeopteryx/docs"
 	// Internal
+	docs_swagger "github.com/iakrevetkho/archaeopteryx/docs/swagger"
 )
 
 func (s *Server) createFsHandler() http.Handler {
@@ -17,7 +17,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	swaggerFilePaths := []string{
 		"health/v1/health_v1.swagger.json",
 	}
-	swaggerHomeTmpl, err := template.ParseFS(docs.Swagger, "index.html")
+	swaggerHomeTmpl, err := template.ParseFS(docs_swagger.SwaggerTmpl, "*")
 	if err != nil {
 		return nil, err
 	}
