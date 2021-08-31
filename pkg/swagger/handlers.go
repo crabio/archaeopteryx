@@ -6,11 +6,12 @@ import (
 	"text/template"
 
 	// Internal
+	"github.com/iakrevetkho/archaeopteryx/docs"
 	docs_swagger "github.com/iakrevetkho/archaeopteryx/docs/swagger"
 )
 
 func (s *Server) createFsHandler() http.Handler {
-	return http.FileServer(http.Dir(s.config.Docs.SwaggerDir))
+	return http.FileServer(http.FS(docs.Swagger))
 }
 
 func (s *Server) createHomePageHandler() (http.Handler, error) {

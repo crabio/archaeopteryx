@@ -26,10 +26,14 @@ type Server struct {
 	log         *logrus.Entry
 	controllers *api_data.Controllers
 
-	services []service.IServiceServer
+	services        []service.IServiceServer
+	grpcServer      *grpc_server.Server
+	grpcProxyServer *grpc_proxy_server.Server
 }
 
-func New(config *config.Config, externalServices []service.IServiceServer) *Server {
+func New(config *config.Config, externalServices []service.IServiceServer) (*Server, error) {
+	var err error
+
 	s := new(Server)
 
 	helpers.InitLogger(config)
@@ -47,25 +51,26 @@ func New(config *config.Config, externalServices []service.IServiceServer) *Serv
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	return s
+	s.grpcServer, err = grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
+	}
+
+	s.grpcProxyServer, err = grpc_proxy_server.New(s.Config, s.grpcServer, s.services)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
+	}
+
+	return s, nil
 }
 
 func (s *Server) Run() error {
-	grpcServer, err := grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
-	if err != nil {
-		return fmt.Errorf("couldn't create gRPC server. " + err.Error())
-	}
 	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
-	if err := grpcServer.Run(); err != nil {
+	if err := s.grpcServer.Run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
 
-	grpcProxyServer, err := grpc_proxy_server.New(s.Config, grpcServer, s.services)
-	if err != nil {
-		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
-	}
-
-	if err := grpcProxyServer.Run(); err != nil {
+	if err := s.grpcProxyServer.Run(); err != nil {
 		return fmt.Errorf("couldn't run gRPC proxy server. " + err.Error())
 	}
 

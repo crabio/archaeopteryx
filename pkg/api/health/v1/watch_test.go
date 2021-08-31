@@ -4,6 +4,8 @@ import (
 	// External
 
 	"context"
+	"errors"
+	"sync"
 	"testing"
 	"time"
 
@@ -22,11 +24,22 @@ import (
 
 type MockhWatchServer struct {
 	MsgCount uint32
+
+	sync.Mutex
+	Close bool
+
 	grpc.ServerStream
 }
 
 func (s *MockhWatchServer) Send(m *health_v1.HealthCheckResponse) error {
+	s.Lock()
 	s.MsgCount += 1
+	needClose := s.Close
+	s.Unlock()
+
+	if needClose {
+		return errors.New("connection is closed")
+	}
 	return nil
 }
 
@@ -51,11 +64,20 @@ func TestWatch(t *testing.T) {
 func testWatch(t *testing.T, s *api_health_v1.HealthServiceServer, r *health_v1.HealthCheckRequest) {
 	mockWatchServer := MockhWatchServer{}
 
+	exit := make(chan bool)
 	go func() {
-		assert.NoError(t, s.Watch(r, &mockWatchServer))
+		assert.Error(t, s.Watch(r, &mockWatchServer))
+		exit <- true
 	}()
 
 	time.Sleep(time.Millisecond * 250)
 
+	// Close Mock connection
+	mockWatchServer.Lock()
+	mockWatchServer.Close = true
 	assert.Equal(t, uint32(3), mockWatchServer.MsgCount)
+	mockWatchServer.Unlock()
+
+	// Wait exit
+	<-exit
 }
