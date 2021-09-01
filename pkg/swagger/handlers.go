@@ -22,12 +22,10 @@ func createFsHandler(fileSystem embed.FS, folder string) (http.Handler, error) {
 }
 
 func (s *Server) createHomePageHandler() (http.Handler, error) {
-	swaggerFilePaths := []string{
-		"health/v1/health_v1.swagger.json",
-	}
+	var swaggerFilePaths []string
 
 	// Parse and add pkg's swagger files
-	pkgSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger")
+	pkgSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger", pkgDocsPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +33,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 
 	// Parse and add user's swagger files
 	if s.config.Docs.DocsFS != nil {
-		userSwaggerFilePaths, err := GetOpenAPIFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder)
+		userSwaggerFilePaths, err := GetOpenAPIFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, userDocsPrefix)
 		if err != nil {
 			s.log.WithError(err).Error("No user's swagger files found")
 		} else {

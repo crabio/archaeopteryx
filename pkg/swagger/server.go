@@ -65,12 +65,16 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			s.hpHandler.ServeHTTP(w, r)
 		} else {
 			s.log.WithField("path", r.URL.Path).Debug("Serve pkg docs")
+			// Remove FS prefix from URL
+			r.URL.Path = r.URL.Path[len(pkgDocsPrefix):]
 			s.pkgFsHandler.ServeHTTP(w, r)
 		}
 
 	} else if strings.HasPrefix(r.URL.Path, userDocsPrefix) {
 		s.log.WithField("path", r.URL.Path).Debug("Serve user docs")
 		if s.userFsHandler != nil {
+			// Remove FS prefix from URL
+			r.URL.Path = r.URL.Path[len(userDocsPrefix):]
 			s.userFsHandler.ServeHTTP(w, r)
 		} else {
 			s.log.Error("user fs handler is not inited. Add user swagger docs FS")

@@ -8,7 +8,7 @@ import (
 	// Internal
 )
 
-func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string) ([]string, error) {
+func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([]string, error) {
 	var filesPaths []string
 
 	libRegEx, err := regexp.Compile(`^.+\.(json)$`)
@@ -27,7 +27,7 @@ func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string) ([]string, error)
 		}
 		// Check regexp
 		if libRegEx.MatchString(d.Name()) {
-			filesPaths = append(filesPaths, path)
+			filesPaths = append(filesPaths, prefix+path)
 		}
 		return nil
 	}); err != nil {
