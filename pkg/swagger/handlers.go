@@ -2,6 +2,8 @@ package swagger
 
 import (
 	// External
+
+	"embed"
 	"io/fs"
 	"net/http"
 	"text/template"
@@ -11,12 +13,11 @@ import (
 	docs_swagger "github.com/iakrevetkho/archaeopteryx/docs/swagger"
 )
 
-func (s *Server) createFsHandler() (http.Handler, error) {
-	subFS, err := fs.Sub(docs.Swagger, "swagger")
+func createFsHandler(fileSystem embed.FS, folder string) (http.Handler, error) {
+	subFS, err := fs.Sub(fileSystem, folder)
 	if err != nil {
 		return nil, err
 	}
-
 	return http.FileServer(http.FS(subFS)), nil
 }
 
