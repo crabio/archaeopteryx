@@ -1,6 +1,7 @@
 package config
 
 import (
+	"embed"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -29,6 +30,9 @@ type Config struct {
 	}
 
 	Docs struct {
-		SwaggerDir string `default:"docs/swagger" env:"SWAGGER_DIR"`
+		// Embed file system with service Swagger documentation
+		DocsFS *embed.FS
+		// Folder name in FS with swagger docs
+		DocsRootFolder string
 	}
 }
