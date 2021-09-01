@@ -14,6 +14,12 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
+const (
+	mainPagePath   = "/doc/swagger/"
+	pkgDocsPrefix  = "/doc/swagger/"
+	userDocsPrefix = "/doc"
+)
+
 type Server struct {
 	log    *logrus.Entry
 	config *config.Config
@@ -52,16 +58,15 @@ func New(config *config.Config) (*Server, error) {
 	return s, nil
 }
 
-const (
-	mainPagePath   = "/doc/swagger"
-	pkgDocsPrefix  = "/doc/achaeopteryx"
-	userDocsPrefix = "/doc"
-)
-
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == mainPagePath {
-		s.log.Debug("Serve main page")
-		s.hpHandler.ServeHTTP(w, r)
+	if strings.HasPrefix(r.URL.Path, pkgDocsPrefix) {
+		if r.URL.Path == mainPagePath {
+			s.log.Debug("Serve main page")
+			s.hpHandler.ServeHTTP(w, r)
+		} else {
+			s.log.WithField("path", r.URL.Path).Debug("Serve pkg docs")
+			s.pkgFsHandler.ServeHTTP(w, r)
+		}
 
 	} else if strings.HasPrefix(r.URL.Path, userDocsPrefix) {
 		s.log.WithField("path", r.URL.Path).Debug("Serve user docs")
@@ -71,8 +76,5 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			s.log.Error("user fs handler is not inited. Add user swagger docs FS")
 		}
 
-	} else if strings.HasPrefix(r.URL.Path, pkgDocsPrefix) {
-		s.log.WithField("path", r.URL.Path).Debug("Serve pkg docs")
-		s.pkgFsHandler.ServeHTTP(w, r)
 	}
 }

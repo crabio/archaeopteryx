@@ -26,12 +26,21 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 		"health/v1/health_v1.swagger.json",
 	}
 
-	// Parse and add user's swagger files
-	userSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger")
+	// Parse and add pkg's swagger files
+	pkgSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger")
 	if err != nil {
-		s.log.WithError(err).Error("No user's swagger files found")
-	} else {
-		swaggerFilePaths = append(swaggerFilePaths, userSwaggerFilePaths...)
+		return nil, err
+	}
+	swaggerFilePaths = append(swaggerFilePaths, pkgSwaggerFilePaths...)
+
+	// Parse and add user's swagger files
+	if s.config.Docs.DocsFS != nil {
+		userSwaggerFilePaths, err := GetOpenAPIFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder)
+		if err != nil {
+			s.log.WithError(err).Error("No user's swagger files found")
+		} else {
+			swaggerFilePaths = append(swaggerFilePaths, userSwaggerFilePaths...)
+		}
 	}
 
 	swaggerHomeTmpl, err := template.ParseFS(docs_swagger.SwaggerTmpl, "*")
