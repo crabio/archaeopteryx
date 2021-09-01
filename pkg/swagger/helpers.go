@@ -2,13 +2,13 @@ package swagger
 
 import (
 	// External
-	"os"
-	"path/filepath"
+	"embed"
+	"io/fs"
 	"regexp"
 	// Internal
 )
 
-func getOpenAPIFilesPaths(dir string) ([]string, error) {
+func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string) ([]string, error) {
 	var filesPaths []string
 
 	libRegEx, err := regexp.Compile(`^.+\.(json)$`)
@@ -16,18 +16,21 @@ func getOpenAPIFilesPaths(dir string) ([]string, error) {
 		return nil, err
 	}
 
-	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	fs.WalkDir(fileSystem, dirName, func(path string, d fs.DirEntry, err error) error {
+		// Check input error
 		if err != nil {
 			return err
 		}
-		if libRegEx.MatchString(info.Name()) {
-			filesPaths = append(filesPaths, path[len(dir):])
+		// Check that we walk onto file
+		if d.IsDir() {
+			return nil
+		}
+		// Check regexp
+		if libRegEx.MatchString(d.Name()) {
+			filesPaths = append(filesPaths, path)
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
 
 	// Check if no available files
 	if len(filesPaths) == 0 {

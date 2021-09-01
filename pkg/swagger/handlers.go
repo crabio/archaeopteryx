@@ -26,7 +26,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	}
 
 	// Parse and add user's swagger files
-	userSwaggerFilePaths, err := getOpenAPIFilesPaths(s.config.Docs.SwaggerDir)
+	userSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger")
 	if err != nil {
 		s.log.WithError(err).Error("No user's swagger files found")
 	} else {
