@@ -28,7 +28,7 @@ func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([
 		// Check regexp
 		if libRegEx.MatchString(d.Name()) {
 			// Remove root dir from path
-			pathWithoutRoot := path[len(dirName)+1:]
+			pathWithoutRoot := path[len(dirName):]
 			// Add file path prefix
 			pathWithPrefix := prefix + pathWithoutRoot
 
