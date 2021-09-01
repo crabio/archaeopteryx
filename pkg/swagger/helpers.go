@@ -8,7 +8,7 @@ import (
 	// Internal
 )
 
-func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([]string, error) {
+func GetSwaggerFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([]string, error) {
 	var filesPaths []string
 
 	libRegEx, err := regexp.Compile(`^.+\.(json)$`)

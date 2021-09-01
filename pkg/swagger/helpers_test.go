@@ -12,8 +12,8 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 )
 
-func TestGetOpenAPIFilesPaths(t *testing.T) {
-	filePaths, err := swagger.GetOpenAPIFilesPaths(docs.Swagger, "swagger", "/doc/swagger/")
+func TestGetSwaggerFilesPaths(t *testing.T) {
+	filePaths, err := swagger.GetSwaggerFilesPaths(docs.Swagger, "swagger", "/doc/swagger/")
 	assert.NoError(t, err)
 	assert.Equal(t, 3, len(filePaths))
 	assert.Equal(t, "/doc/swagger/google/api/annotations.swagger.json", filePaths[0])
