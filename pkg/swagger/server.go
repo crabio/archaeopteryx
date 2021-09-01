@@ -17,7 +17,7 @@ import (
 const (
 	mainPagePath   = "/doc/swagger/"
 	pkgDocsPrefix  = "/doc/swagger/"
-	userDocsPrefix = "/doc"
+	userDocsPrefix = "/doc/"
 )
 
 type Server struct {
