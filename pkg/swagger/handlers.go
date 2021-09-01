@@ -25,7 +25,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	var swaggerFilePaths []string
 
 	// Parse and add pkg's swagger files
-	pkgSwaggerFilePaths, err := GetOpenAPIFilesPaths(docs.Swagger, "swagger", pkgDocsPrefix)
+	pkgSwaggerFilePaths, err := GetSwaggerFilesPaths(docs.Swagger, "swagger", pkgDocsPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 
 	// Parse and add user's swagger files
 	if s.config.Docs.DocsFS != nil {
-		userSwaggerFilePaths, err := GetOpenAPIFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, userDocsPrefix)
+		userSwaggerFilePaths, err := GetSwaggerFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, userDocsPrefix)
 		if err != nil {
 			s.log.WithError(err).Error("No user's swagger files found")
 		} else {
@@ -49,7 +49,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Open API home page
 		if err := swaggerHomeTmpl.Execute(w, map[string]interface{}{"filePaths": swaggerFilePaths}); err != nil {
-			s.log.WithError(err).Error("couldn't execute OpenAPI home template")
+			s.log.WithError(err).Error("couldn't execute Swagger home template")
 		}
 	}), nil
 }

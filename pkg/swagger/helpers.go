@@ -8,7 +8,7 @@ import (
 	// Internal
 )
 
-func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([]string, error) {
+func GetSwaggerFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([]string, error) {
 	var filesPaths []string
 
 	libRegEx, err := regexp.Compile(`^.+\.(json)$`)
@@ -28,7 +28,7 @@ func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([
 		// Check regexp
 		if libRegEx.MatchString(d.Name()) {
 			// Remove root dir from path
-			pathWithoutRoot := path[len(dirName):]
+			pathWithoutRoot := path[len(dirName)+1:]
 			// Add file path prefix
 			pathWithPrefix := prefix + pathWithoutRoot
 
