@@ -16,7 +16,7 @@ func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string) ([]string, error)
 		return nil, err
 	}
 
-	fs.WalkDir(fileSystem, dirName, func(path string, d fs.DirEntry, err error) error {
+	if err := fs.WalkDir(fileSystem, dirName, func(path string, d fs.DirEntry, err error) error {
 		// Check input error
 		if err != nil {
 			return err
@@ -30,7 +30,9 @@ func GetOpenAPIFilesPaths(fileSystem embed.FS, dirName string) ([]string, error)
 			filesPaths = append(filesPaths, path)
 		}
 		return nil
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	// Check if no available files
 	if len(filesPaths) == 0 {

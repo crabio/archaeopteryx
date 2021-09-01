@@ -71,7 +71,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			s.log.Error("user fs handler is not inited. Add user swagger docs FS")
 		}
 
-	} else if strings.HasPrefix(r.URL.Path, userDocsPrefix) {
+	} else if strings.HasPrefix(r.URL.Path, pkgDocsPrefix) {
 		s.log.WithField("path", r.URL.Path).Debug("Serve pkg docs")
 		s.pkgFsHandler.ServeHTTP(w, r)
 	}
