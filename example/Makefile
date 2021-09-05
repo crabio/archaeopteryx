@@ -1,11 +1,15 @@
 help:
-	@echo "Makefile for the archaeopteryx."
+	@echo "Makefile for the archaeopteryx example."
 	@echo "Available targets:"
 	@echo " help - print help information"
 	@echo " install - install required dependecies for the project"
 	@echo " generate - generate proto files"
 	@echo " lint - run linter"
 	@echo " test - run unit tests"
+	@echo " build - build application binary"
+	@echo " run - run application"
+	@echo " build_docker - build application docker image"
+	@echo " run_docker - run application in docker"
 
 install:
 	@echo "Install Buf generators"
@@ -41,7 +45,7 @@ lint:
 
 test:
 	@echo "Run unit tests"
-	go test --race -v ./... -coverprofile coverage.txt -covermode atomic
+	go test -v ./... -coverprofile coverage.txt -covermode atomic
 	@echo "Code coverage"
 	go tool cover -func coverage.txt
 
@@ -52,3 +56,11 @@ build:
 run:
 	@echo "Run app"
 	go run .
+
+build_docker:
+	@echo "Build docker image"
+	docker build . --file Dockerfile --tag archaeopteryx_example
+
+run_docker:
+	@echo "Run app in docker"
+	docker run -p 8080:8080 -p 8090:8090 -e LOG_LEVEL=trace  archaeopteryx_example
