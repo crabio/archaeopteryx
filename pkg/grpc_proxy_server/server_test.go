@@ -21,13 +21,14 @@ func TestNew(t *testing.T) {
 	c.Config = new(config.Config)
 	assert.NoError(t, configor.Load(c.Config))
 
-	grpcs, err := grpc_server.New(c.Config.GrpcPort, c, []service.IServiceServer{})
+	grpcs, err := grpc_server.New(c, []service.IServiceServer{})
 	assert.NoError(t, err)
 	assert.NotNil(t, grpcs)
 
-	assert.NoError(t, grpcs.Run())
+	// TODO Run serving gRPC
+	// assert.NoError(t, grpcs.Run())
 
-	s, err := grpc_proxy_server.New(c.Config, grpcs, []service.IServiceServer{})
+	s, err := grpc_proxy_server.New(c.Config, []service.IServiceServer{})
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 }
