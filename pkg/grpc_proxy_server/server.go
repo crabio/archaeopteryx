@@ -19,6 +19,7 @@ import (
 
 type Server struct {
 	log      *logrus.Entry
+	c        *config.Config
 	Port     int
 	grpcConn *grpc.ClientConn
 	mux      *runtime.ServeMux
@@ -29,24 +30,13 @@ type Server struct {
 // and proxy them onto gRPC server on [grpcServer] port.
 //
 // Requests from the [port] will be redirected to the [grpcServer] port.
-func New(config *config.Config, services []service.IServiceServer) (*Server, error) {
-	var err error
-	ps := new(Server)
-	ps.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
-
-	// Create a client connection to the gRPC server
-	ps.grpcConn, err = grpc.DialContext(
-		context.Background(),
-		":"+strconv.Itoa(config.Port)+helpers.GRPC_PATH,
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		return nil, err
-	}
+func New(c *config.Config) *Server {
+	s := new(Server)
+	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
+	s.c = c
 
 	// Create mux router to route HTTP requests in server
-	ps.mux = runtime.NewServeMux(
+	s.mux = runtime.NewServeMux(
 		runtime.WithMarshalerOption(
 			runtime.MIMEWildcard,
 			&runtime.JSONPb{
@@ -60,17 +50,37 @@ func New(config *config.Config, services []service.IServiceServer) (*Server, err
 		),
 	)
 
-	// Register internal proxy service routes
-	for _, service := range services {
-		if err := service.RegisterGrpcProxy(context.Background(), ps.mux, ps.grpcConn); err != nil {
-			return nil, err
-		}
-	}
-	ps.log.Debug("Services are registered")
-
-	return ps, nil
+	return s
 }
 
-func (ps *Server) GetGrpcProxyHandler(mux *runtime.ServeMux) gin.HandlerFunc {
-	return gin.WrapH(ps.mux)
+func (s *Server) GetHttpHandler() gin.HandlerFunc {
+	return gin.WrapH(s.mux)
+}
+
+// Method dials connection to the grpc Server and registers user services.
+//
+// NOTE. Before this function call, gRPC server should be served.
+func (s *Server) RegisterServices(services []service.IServiceServer) error {
+	var err error
+
+	// Create a client connection to the gRPC server
+	s.grpcConn, err = grpc.DialContext(
+		context.Background(),
+		":"+strconv.FormatUint(s.c.Port, 10)+helpers.GRPC_PATH,
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		return err
+	}
+
+	// Register internal proxy service routes
+	for _, service := range services {
+		if err := service.RegisterGrpcProxy(context.Background(), s.mux, s.grpcConn); err != nil {
+			return err
+		}
+	}
+	s.log.Debug("Services are registered")
+
+	return nil
 }

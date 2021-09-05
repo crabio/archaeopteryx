@@ -28,7 +28,6 @@ func TestNew(t *testing.T) {
 	// TODO Run serving gRPC
 	// assert.NoError(t, grpcs.Run())
 
-	s, err := grpc_proxy_server.New(c.Config, []service.IServiceServer{})
-	assert.NoError(t, err)
+	s := grpc_proxy_server.New(c.Config)
 	assert.NotNil(t, s)
 }

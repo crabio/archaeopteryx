@@ -16,6 +16,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	"github.com/iakrevetkho/archaeopteryx/pkg/http"
 	"github.com/iakrevetkho/archaeopteryx/service"
 	"github.com/sirupsen/logrus"
 )
@@ -25,10 +26,11 @@ type Server struct {
 
 	log         *logrus.Entry
 	controllers *api_data.Controllers
+	services    []service.IServiceServer
 
-	services        []service.IServiceServer
-	grpcServer      *grpc_server.Server
-	grpcProxyServer *grpc_proxy_server.Server
+	grpcs      *grpc_server.Server
+	grpcps     *grpc_proxy_server.Server
+	httpServer *http.Server
 }
 
 func New(config *config.Config, externalServices []service.IServiceServer) (*Server, error) {
@@ -51,29 +53,29 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	s.grpcServer, err = grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
+	s.grpcs, err = grpc_server.New(s.controllers, s.services)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
+
+	// Init gRPC server proxy on run, because it can be inited only with working gRPC server
+	s.grpcps = grpc_proxy_server.New(s.Config)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
+	}
+
+	s.httpServer = http.New(s.Config, s.grpcs, s.grpcps)
 
 	return s, nil
 }
 
 func (s *Server) Run() error {
-	var err error
-
-	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
-	if err := s.grpcServer.Run(); err != nil {
-		return fmt.Errorf("couldn't run gRPC server. " + err.Error())
+	if err := s.httpServer.Run(); err != nil {
+		return fmt.Errorf("couldn't run http server. " + err.Error())
 	}
 
-	// Init gRPC server proxy on run, because it can be inited only with working gRPC server
-	s.grpcProxyServer, err = grpc_proxy_server.New(s.Config, s.grpcServer, s.services)
-	if err != nil {
-		return fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
-	}
-	if err := s.grpcProxyServer.Run(); err != nil {
-		return fmt.Errorf("couldn't run gRPC proxy server. " + err.Error())
+	if err := s.grpcps.RegisterServices(s.services); err != nil {
+		return fmt.Errorf("couldn't register gRPC proxy services. " + err.Error())
 	}
 
 	s.log.Info("Wait exit signal")
