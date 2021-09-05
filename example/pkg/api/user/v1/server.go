@@ -10,8 +10,7 @@ import (
 
 	// Internal
 	user_v1 "github.com/iakrevetkho/archaeopteryx/example/proto/gen/user/v1"
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
-	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
+	"github.com/iakrevetkho/archaeopteryx/logger"
 )
 
 type UserServiceServer struct {
@@ -20,22 +19,24 @@ type UserServiceServer struct {
 	user_v1.UnimplementedUserServiceServer
 }
 
-func RegisterServiceServer(s grpc.ServiceRegistrar, controllers *api_data.Controllers) error {
+func New() *UserServiceServer {
 	server := new(UserServiceServer)
-	server.log = helpers.CreateComponentLogger("grpc-user-v1")
+	server.log = logger.CreateLogger("grpc-user-v1")
+	return server
+}
 
-	// Attach the User service to the server
-	user_v1.RegisterUserServiceServer(s, server)
-	server.log.Debug("Service registered")
-
+// RegisterGrpc - HealthServiceServer's method to registrate gRPC service server handlers
+func (s *UserServiceServer) RegisterGrpc(sr grpc.ServiceRegistrar) error {
+	user_v1.RegisterUserServiceServer(sr, s)
+	s.log.Logger.Debug("Service gRPC registered")
 	return nil
 }
 
-func RegisterProxyServiceServer(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	// Attach handler to global handler
-	if err := user_v1.RegisterUserServiceHandler(context.Background(), mux, conn); err != nil {
+// RegisterGrpcProxy - HealthServiceServer's method to registrate gRPC proxy service server handlers
+func (s *UserServiceServer) RegisterGrpcProxy(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	if err := user_v1.RegisterUserServiceHandler(ctx, mux, conn); err != nil {
 		return err
 	}
-
+	s.log.Logger.Debug("Service gRPC proxy registered")
 	return nil
 }

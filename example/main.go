@@ -11,6 +11,7 @@ import (
 	archaeopteryx_config "github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/archaeopteryx/example/docs"
 	api_hello_world_v1 "github.com/iakrevetkho/archaeopteryx/example/pkg/api/hello_world/v1"
+	api_user_v1 "github.com/iakrevetkho/archaeopteryx/example/pkg/api/user/v1"
 	archaeopteryx_service "github.com/iakrevetkho/archaeopteryx/service"
 )
 
@@ -30,6 +31,7 @@ func main() {
 	// Init services
 	services := []archaeopteryx_service.IServiceServer{
 		api_hello_world_v1.New(),
+		api_user_v1.New(),
 	}
 
 	// Create archeopteryx server
