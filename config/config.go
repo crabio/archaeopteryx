@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Version string `default:"" env:"VERSION"`
 
-	Port int `default:"8080" env:"PORT"`
+	Port uint64 `default:"8080" env:"PORT"`
 
 	Log struct {
 		Level    logrus.Level `default:"info" env:"LOG_LEVEL"`
