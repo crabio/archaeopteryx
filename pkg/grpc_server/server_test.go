@@ -20,7 +20,7 @@ func TestNew(t *testing.T) {
 	c.Config = new(config.Config)
 	assert.NoError(t, configor.Load(c.Config))
 
-	s, err := grpc_server.New(c.Config.GrpcPort, c, []service.IServiceServer{})
+	s, err := grpc_server.New(c, []service.IServiceServer{})
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 }
