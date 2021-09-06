@@ -10,7 +10,8 @@ import (
 type Config struct {
 	Version string `default:"" env:"VERSION"`
 
-	Port uint64 `default:"8080" env:"PORT"`
+	GrpcPort    uint64 `default:"8080" env:"GRPC_PORT"`
+	RestApiPort uint64 `default:"8090" env:"REST_API_PORT"`
 
 	Log struct {
 		Level    logrus.Level `default:"info" env:"LOG_LEVEL"`

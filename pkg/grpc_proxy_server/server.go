@@ -66,7 +66,7 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	// Create a client connection to the gRPC server
 	s.grpcConn, err = grpc.DialContext(
 		context.Background(),
-		":"+strconv.FormatUint(s.c.Port, 10)+helpers.GRPC_PATH,
+		":"+strconv.FormatUint(s.c.GrpcPort, 10),
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	)

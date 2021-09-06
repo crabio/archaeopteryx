@@ -3,7 +3,9 @@ package grpc_server
 import (
 	// External
 
-	"github.com/gin-gonic/gin"
+	"net"
+	"strconv"
+
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -16,12 +18,15 @@ import (
 
 type Server struct {
 	log        *logrus.Entry
+	Port       uint64
 	grpcServer *grpc.Server
 }
 
-func New(controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
+// Function creates gRPC server on the [port]
+func New(port uint64, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
+	s.Port = port
 	s.grpcServer = grpc.NewServer()
 
 	// Register service routes
@@ -38,6 +43,20 @@ func New(controllers *api_data.Controllers, services []service.IServiceServer) (
 	return s, nil
 }
 
-func (s *Server) GetHttpHandler() gin.HandlerFunc {
-	return gin.WrapH(s.grpcServer)
+// Function runs gRPC server on the [port]
+func (s *Server) Run() error {
+	// Create a listener on TCP port
+	listener, err := net.Listen("tcp", ":"+strconv.FormatUint(s.Port, 10))
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		if err := s.grpcServer.Serve(listener); err != nil {
+			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
+		}
+	}()
+	s.log.WithField("url", ":"+strconv.FormatUint(s.Port, 10)).Debug("Serving gRPC")
+
+	return nil
 }

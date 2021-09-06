@@ -53,7 +53,7 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	s.grpcs, err = grpc_server.New(s.controllers, s.services)
+	s.grpcs, err = grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
@@ -64,19 +64,22 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
 	}
 
-	s.httpServer = http.New(s.Config, s.grpcs, s.grpcps)
+	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
+	if err := s.grpcs.Run(); err != nil {
+		return nil, fmt.Errorf("couldn't run gRPC server. " + err.Error())
+	}
+
+	if err := s.grpcps.RegisterServices(s.services); err != nil {
+		return nil, fmt.Errorf("couldn't register gRPC proxy services. " + err.Error())
+	}
+
+	s.httpServer = http.New(s.Config, s.grpcps)
 
 	return s, nil
 }
 
 func (s *Server) Run() error {
-	if err := s.httpServer.Run(); err != nil {
-		return fmt.Errorf("couldn't run http server. " + err.Error())
-	}
-
-	if err := s.grpcps.RegisterServices(s.services); err != nil {
-		return fmt.Errorf("couldn't register gRPC proxy services. " + err.Error())
-	}
+	s.httpServer.Run()
 
 	s.log.Info("Wait exit signal")
 	quitSignal := make(chan os.Signal, 1)
