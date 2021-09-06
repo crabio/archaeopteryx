@@ -25,7 +25,7 @@ func New(c *config.Config, grpcps *grpc_proxy_server.Server) *Server {
 	s.c = c
 	s.r = gin.New()
 
-	s.r.POST(helpers.GRPC_PROXY_PATH, grpcps.GetHttpHandler())
+	s.r.POST("/api", grpcps.GetHttpHandler())
 	s.log.Debug("Routes are registered")
 
 	return s
