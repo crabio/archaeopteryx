@@ -3,7 +3,6 @@ package grpc_server
 import (
 	// External
 
-	"crypto/tls"
 	"net"
 	"strconv"
 
@@ -32,13 +31,9 @@ func New(c *config.Config, controllers *api_data.Controllers, services []service
 	s.Port = c.GrpcPort
 
 	// Check that we have FS with certificates
-	if len(c.Secutiry.Cert) != 0 && len(c.Secutiry.Key) != 0 {
-		creds, err := createTlsCreds(c)
-		if err != nil {
-			return nil, err
-		}
+	if c.Secutiry.TlsConfig != nil {
 		s.log.Info("Create gRPC server with TLS security")
-		s.grpcServer = grpc.NewServer(*creds)
+		s.grpcServer = grpc.NewServer(grpc.Creds(credentials.NewTLS(c.Secutiry.TlsConfig)))
 	} else {
 		s.log.Info("Create insecure gRPC server")
 		s.grpcServer = grpc.NewServer()
@@ -56,21 +51,6 @@ func New(c *config.Config, controllers *api_data.Controllers, services []service
 	s.log.Debug("Reflection service on gRPC server is registered")
 
 	return s, nil
-}
-
-func createTlsCreds(c *config.Config) (*grpc.ServerOption, error) {
-	serverCert, err := tls.X509KeyPair(c.Secutiry.Cert, c.Secutiry.Key)
-	if err != nil {
-		return nil, err
-	}
-	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{serverCert},
-		ClientAuth:   tls.NoClientCert,
-	}
-
-	creds := grpc.Creds(credentials.NewTLS(tlsConfig))
-
-	return &creds, nil
 }
 
 // Function runs gRPC server on the [port]

@@ -7,11 +7,21 @@
       "importerName": "GrpcServerReflection",
       "createMissingOperations": true,
       "options": {
-        "endpoint": "http://localhost:8080/rpc",
+        "endpoint": "http://localhost:8080",
         "disableServerCertificateValidation": true
       }
     }
   ],
   "authConfigs": [],
-  "certificates": []
+  "certificates": [
+    {
+      "id": "7b59455a-ddd6-4b9b-800f-aa1063743520",
+      "name": "tls",
+      "type": "key-cert-file",
+      "options": {
+        "keyPath": "../security/key.pem",
+        "certPath": "../security/cert.pem"
+      }
+    }
+  ]
 }

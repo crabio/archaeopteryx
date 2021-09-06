@@ -1,6 +1,8 @@
 package config
 
 import (
+	// External
+	"crypto/tls"
 	"embed"
 	"time"
 
@@ -41,5 +43,9 @@ type Config struct {
 		Cert []byte
 		// PEM key file bytes
 		Key []byte
+		// TLS config.
+		// Don't write this
+		// This struct will be parsed by archaeopteryx
+		TlsConfig *tls.Config
 	}
 }

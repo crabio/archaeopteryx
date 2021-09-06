@@ -10,6 +10,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	// Internal
@@ -67,14 +68,28 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	context, _ := context.WithTimeout(context.Background(), time.Second*5)
 
 	// Create a client connection to the gRPC server
-	s.grpcConn, err = grpc.DialContext(
-		context,
-		":"+strconv.FormatUint(s.c.GrpcPort, 10),
-		grpc.WithBlock(),
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		return err
+	if s.c.Secutiry.TlsConfig != nil {
+		s.log.Info("Create secure connection to gRPC server")
+		s.grpcConn, err = grpc.DialContext(
+			context,
+			":"+strconv.FormatUint(s.c.GrpcPort, 10),
+			grpc.WithBlock(),
+			grpc.WithTransportCredentials(credentials.NewTLS(s.c.Secutiry.TlsConfig)),
+		)
+		if err != nil {
+			return err
+		}
+	} else {
+		s.log.Info("Create insecure connection to gRPC server")
+		s.grpcConn, err = grpc.DialContext(
+			context,
+			":"+strconv.FormatUint(s.c.GrpcPort, 10),
+			grpc.WithBlock(),
+			grpc.WithInsecure(),
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Register internal proxy service routes

@@ -44,6 +44,15 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 	s.log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
 
 	s.Config = config
+
+	// Read TLS config
+	if len(s.Config.Secutiry.Cert) != 0 && len(s.Config.Secutiry.Key) != 0 {
+		s.Config.Secutiry.TlsConfig, err = helpers.CreateTlsConfig(s.Config)
+		if err != nil {
+			return nil, fmt.Errorf("couldn't create TLS config. " + err.Error())
+		}
+	}
+
 	s.controllers = new(api_data.Controllers)
 	s.controllers.Config = config
 	s.controllers.HealthChecker = healthchecker.New()
