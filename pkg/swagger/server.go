@@ -57,9 +57,17 @@ func (s *Server) GetMainPageHandler() gin.HandlerFunc {
 }
 
 func (s *Server) GetPkgDocsHandler() gin.HandlerFunc {
-	return gin.WrapH(s.pkgFsHandler)
+	return func(c *gin.Context) {
+		// Change file URL path for FS route
+		c.Request.URL.Path = c.Param("file")
+		s.pkgFsHandler.ServeHTTP(c.Writer, c.Request)
+	}
 }
 
 func (s *Server) GetUserDocsHandler() gin.HandlerFunc {
-	return gin.WrapH(s.userFsHandler)
+	return func(c *gin.Context) {
+		// Change file URL path for FS route
+		c.Request.URL.Path = c.Param("file")
+		s.userFsHandler.ServeHTTP(c.Writer, c.Request)
+	}
 }
