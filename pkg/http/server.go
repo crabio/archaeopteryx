@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/toorop/gin-logrus"
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
@@ -26,6 +27,7 @@ func New(c *config.Config, grpcps *grpc_proxy_server.Server, sws *swagger.Server
 	s.log = helpers.CreateComponentLogger("archeaopteryx-http")
 	s.c = c
 	s.r = gin.New()
+	s.r.Use(ginlogrus.Logger(s.log), gin.Recovery())
 
 	s.r.GET(helpers.API_ROUTE, grpcps.GetHttpHandler())
 	s.r.POST(helpers.API_ROUTE, grpcps.GetHttpHandler())

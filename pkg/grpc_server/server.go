@@ -56,7 +56,7 @@ func (s *Server) Run() error {
 			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
 		}
 	}()
-	s.log.WithField("url", ":"+strconv.FormatUint(s.Port, 10)).Debug("Serving gRPC")
+	s.log.WithField("url", ":"+strconv.FormatUint(s.Port, 10)).Info("Serving gRPC")
 
 	return nil
 }
