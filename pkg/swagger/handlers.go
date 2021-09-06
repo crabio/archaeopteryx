@@ -11,6 +11,7 @@ import (
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/docs"
 	docs_swagger "github.com/iakrevetkho/archaeopteryx/docs/swagger"
+	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
 func createFsHandler(fileSystem embed.FS, folder string) (http.Handler, error) {
@@ -25,7 +26,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	var swaggerFilePaths []string
 
 	// Parse and add pkg's swagger files
-	pkgSwaggerFilePaths, err := GetSwaggerFilesPaths(docs.Swagger, "swagger", pkgDocsPrefix)
+	pkgSwaggerFilePaths, err := GetSwaggerFilesPaths(docs.Swagger, "swagger", helpers.PKG_STATIC_DOCS_ROUTE)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +34,7 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 
 	// Parse and add user's swagger files
 	if s.config.Docs.DocsFS != nil {
-		userSwaggerFilePaths, err := GetSwaggerFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, userDocsPrefix)
+		userSwaggerFilePaths, err := GetSwaggerFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, helpers.USER_STATIC_DOCS_ROUTE)
 		if err != nil {
 			s.log.WithError(err).Error("No user's swagger files found")
 		} else {

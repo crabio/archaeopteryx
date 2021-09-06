@@ -17,6 +17,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/iakrevetkho/archaeopteryx/pkg/http"
+	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 	"github.com/iakrevetkho/archaeopteryx/service"
 	"github.com/sirupsen/logrus"
 )
@@ -73,7 +74,12 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 		return nil, fmt.Errorf("couldn't register gRPC proxy services. " + err.Error())
 	}
 
-	s.httpServer = http.New(s.Config, s.grpcps)
+	sws, err := swagger.New(s.Config)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create Swagger docs server. " + err.Error())
+	}
+
+	s.httpServer = http.New(s.Config, s.grpcps, sws)
 
 	return s, nil
 }

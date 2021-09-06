@@ -15,6 +15,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/http"
+	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
@@ -35,6 +36,9 @@ func TestNew(t *testing.T) {
 
 	assert.NoError(t, grpcps.RegisterServices(services))
 
-	httpServer := http.New(c.Config, grpcps)
+	sws, err := swagger.New(c.Config)
+	assert.NoError(t, err)
+
+	httpServer := http.New(c.Config, grpcps, sws)
 	httpServer.Run()
 }

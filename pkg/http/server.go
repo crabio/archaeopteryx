@@ -6,11 +6,13 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+
+	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-	"github.com/sirupsen/logrus"
-	// Internal
+	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 )
 
 type Server struct {
@@ -19,13 +21,17 @@ type Server struct {
 	r   *gin.Engine
 }
 
-func New(c *config.Config, grpcps *grpc_proxy_server.Server) *Server {
+func New(c *config.Config, grpcps *grpc_proxy_server.Server, sws *swagger.Server) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-http")
 	s.c = c
 	s.r = gin.New()
 
-	s.r.POST("/api", grpcps.GetHttpHandler())
+	s.r.GET(helpers.API_ROUTE, grpcps.GetHttpHandler())
+	s.r.POST(helpers.API_ROUTE, grpcps.GetHttpHandler())
+	s.r.GET(helpers.MAIN_SWAGGER_PAGE_ROUTE, sws.GetMainPageHandler())
+	s.r.GET(helpers.PKG_STATIC_DOCS_ROUTE, sws.GetPkgDocsHandler())
+	s.r.GET(helpers.USER_STATIC_DOCS_ROUTE, sws.GetUserDocsHandler())
 	s.log.Debug("Routes are registered")
 
 	return s
