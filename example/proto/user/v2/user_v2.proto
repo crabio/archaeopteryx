@@ -8,13 +8,13 @@ import "google/api/annotations.proto";
 service UserService {
   rpc AddUser (AddUserRequest) returns (AddUserResponse) {
     option (google.api.http) = {
-      post: "/v2/user"
+      post: "/api/v2/user"
       body: "*"
     };
   }
   rpc GetUser (GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-      get: "/v2/user"
+      get: "/api/v2/user"
     };
   }
 }

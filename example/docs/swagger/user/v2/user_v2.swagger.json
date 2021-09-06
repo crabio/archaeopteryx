@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v2/user": {
+    "/api/v2/user": {
       "get": {
         "operationId": "UserService_GetUser",
         "responses": {
