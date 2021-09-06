@@ -35,4 +35,11 @@ type Config struct {
 		// Folder name in FS with swagger docs
 		DocsRootFolder string
 	}
+
+	Secutiry struct {
+		// PEM certificate file bytes
+		Cert []byte
+		// PEM key file bytes
+		Key []byte
+	}
 }

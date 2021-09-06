@@ -25,7 +25,7 @@ func TestNew(t *testing.T) {
 	assert.NoError(t, configor.Load(c.Config))
 	services := []service.IServiceServer{api_health_v1.New(c)}
 
-	grpcs, err := grpc_server.New(c.Config.GrpcPort, c, services)
+	grpcs, err := grpc_server.New(c.Config, c, services)
 	assert.NoError(t, err)
 	assert.NotNil(t, grpcs)
 

@@ -54,7 +54,7 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	s.grpcs, err = grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
+	s.grpcs, err = grpc_server.New(s.Config, s.controllers, s.services)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
