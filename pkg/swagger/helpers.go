@@ -5,6 +5,7 @@ import (
 	"embed"
 	"io/fs"
 	"regexp"
+	"strings"
 	// Internal
 )
 
@@ -27,6 +28,13 @@ func GetSwaggerFilesPaths(fileSystem embed.FS, dirName string, prefix string) ([
 		}
 		// Check regexp
 		if libRegEx.MatchString(d.Name()) {
+			// Check that dir is not in ignore list
+			for _, ignoredPath := range ignoredSwaggerPaths {
+				if strings.Contains(path, ignoredPath) {
+					return nil
+				}
+			}
+
 			// Remove root dir from path
 			pathWithoutRoot := path[len(dirName)+1:]
 			// Add file path prefix
