@@ -4,6 +4,7 @@ import (
 	// External
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -63,9 +64,11 @@ func (s *Server) GetHttpHandler() gin.HandlerFunc {
 func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	var err error
 
+	context, _ := context.WithTimeout(context.Background(), time.Second*5)
+
 	// Create a client connection to the gRPC server
 	s.grpcConn, err = grpc.DialContext(
-		context.Background(),
+		context,
 		":"+strconv.FormatUint(s.c.GrpcPort, 10),
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
@@ -76,7 +79,7 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 
 	// Register internal proxy service routes
 	for _, service := range services {
-		if err := service.RegisterGrpcProxy(context.Background(), s.mux, s.grpcConn); err != nil {
+		if err := service.RegisterGrpcProxy(context, s.mux, s.grpcConn); err != nil {
 			return err
 		}
 	}

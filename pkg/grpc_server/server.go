@@ -37,8 +37,10 @@ func New(c *config.Config, controllers *api_data.Controllers, services []service
 		if err != nil {
 			return nil, err
 		}
+		s.log.Info("Create gRPC server with TLS security")
 		s.grpcServer = grpc.NewServer(*creds)
 	} else {
+		s.log.Info("Create insecure gRPC server")
 		s.grpcServer = grpc.NewServer()
 	}
 
