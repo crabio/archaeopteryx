@@ -1,4 +1,4 @@
-package grpc_proxy_server_test
+package http_test
 
 import (
 	// External
@@ -14,6 +14,8 @@ import (
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_server"
+	"github.com/iakrevetkho/archaeopteryx/pkg/http"
+	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
@@ -29,8 +31,14 @@ func TestNew(t *testing.T) {
 
 	assert.NoError(t, grpcs.Run())
 
-	s := grpc_proxy_server.New(c.Config)
-	assert.NotNil(t, s)
+	grpcps := grpc_proxy_server.New(c.Config)
+	assert.NotNil(t, grpcps)
 
-	assert.NoError(t, s.RegisterServices(services))
+	assert.NoError(t, grpcps.RegisterServices(services))
+
+	sws, err := swagger.New(c.Config)
+	assert.NoError(t, err)
+
+	httpServer := http.New(c.Config, grpcps, sws)
+	httpServer.Run()
 }

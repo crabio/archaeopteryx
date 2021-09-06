@@ -2,6 +2,7 @@ package grpc_server
 
 import (
 	// External
+
 	"net"
 	"strconv"
 
@@ -17,12 +18,12 @@ import (
 
 type Server struct {
 	log        *logrus.Entry
-	Port       int
+	Port       uint64
 	grpcServer *grpc.Server
 }
 
 // Function creates gRPC server on the [port]
-func New(port int, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
+func New(port uint64, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
 	s.Port = port
@@ -45,7 +46,7 @@ func New(port int, controllers *api_data.Controllers, services []service.IServic
 // Function runs gRPC server on the [port]
 func (s *Server) Run() error {
 	// Create a listener on TCP port
-	listener, err := net.Listen("tcp", ":"+strconv.Itoa(s.Port))
+	listener, err := net.Listen("tcp", ":"+strconv.FormatUint(s.Port, 10))
 	if err != nil {
 		return err
 	}
@@ -55,7 +56,7 @@ func (s *Server) Run() error {
 			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
 		}
 	}()
-	s.log.WithField("url", ":"+strconv.Itoa(s.Port)).Debug("Serving gRPC")
+	s.log.WithField("url", ":"+strconv.FormatUint(s.Port, 10)).Info("Serving gRPC")
 
 	return nil
 }

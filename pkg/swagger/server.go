@@ -4,20 +4,14 @@ import (
 	// External
 	"mime"
 	"net/http"
-	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
 	"github.com/iakrevetkho/archaeopteryx/docs"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
-)
-
-const (
-	mainPagePath   = "/doc/swagger/"
-	pkgDocsPrefix  = "/doc/swagger/"
-	userDocsPrefix = "/doc/"
 )
 
 type Server struct {
@@ -58,27 +52,22 @@ func New(config *config.Config) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if strings.HasPrefix(r.URL.Path, pkgDocsPrefix) {
-		if r.URL.Path == mainPagePath {
-			s.log.Debug("Serve main page")
-			s.hpHandler.ServeHTTP(w, r)
-		} else {
-			s.log.WithField("path", r.URL.Path).Debug("Serve pkg docs")
-			// Remove FS prefix from URL
-			r.URL.Path = r.URL.Path[len(pkgDocsPrefix):]
-			s.pkgFsHandler.ServeHTTP(w, r)
-		}
+func (s *Server) GetMainPageHandler() gin.HandlerFunc {
+	return gin.WrapH(s.hpHandler)
+}
 
-	} else if strings.HasPrefix(r.URL.Path, userDocsPrefix) {
-		s.log.WithField("path", r.URL.Path).Debug("Serve user docs")
-		if s.userFsHandler != nil {
-			// Remove FS prefix from URL
-			r.URL.Path = r.URL.Path[len(userDocsPrefix):]
-			s.userFsHandler.ServeHTTP(w, r)
-		} else {
-			s.log.Error("user fs handler is not inited. Add user swagger docs FS")
-		}
+func (s *Server) GetPkgDocsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Change file URL path for FS route
+		c.Request.URL.Path = c.Param("file")
+		s.pkgFsHandler.ServeHTTP(c.Writer, c.Request)
+	}
+}
 
+func (s *Server) GetUserDocsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Change file URL path for FS route
+		c.Request.URL.Path = c.Param("file")
+		s.userFsHandler.ServeHTTP(c.Writer, c.Request)
 	}
 }
