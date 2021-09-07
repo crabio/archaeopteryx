@@ -1,9 +1,10 @@
 {
   "settings": [
     {
+      "clientCertificateId": "7b59455a-ddd6-4b9b-800f-aa1063743520",
       "options": {
         "grpc": {
-          "endpoint": "http://localhost:8080",
+          "endpoint": "https://localhost:8080",
           "mode": "grpc",
           "disableServerCertificateValidation": true
         }

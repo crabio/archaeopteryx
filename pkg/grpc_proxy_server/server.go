@@ -3,7 +3,6 @@ package grpc_proxy_server
 import (
 	// External
 	"context"
-	"crypto/tls"
 	"strconv"
 	"time"
 
@@ -75,7 +74,7 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 			context,
 			":"+strconv.FormatUint(s.c.GrpcPort, 10),
 			grpc.WithBlock(),
-			grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})),
+			grpc.WithTransportCredentials(credentials.NewTLS(s.c.Secutiry.TlsConfig)),
 		)
 		if err != nil {
 			return err

@@ -16,6 +16,8 @@ func CreateTlsConfig(c *config.Config) (*tls.Config, error) {
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
 		ClientAuth:   tls.NoClientCert,
+		// TODO Valid only for local test
+		InsecureSkipVerify: true,
 	}
 
 	return tlsConfig, nil

@@ -2,8 +2,19 @@
   "id": "ba49d000-ee8b-4132-b75f-a40f9e382683",
   "importStreams": [
     {
-      "id": "5aaf0f9c-5b69-4c31-8931-e279cdbcdaa2",
-      "name": "API Reflection",
+      "id": "0a4fc3f1-ec13-4ad2-91ad-967a58e1ac39",
+      "name": "TLS API Reflection",
+      "importerName": "GrpcServerReflection",
+      "createMissingOperations": true,
+      "options": {
+        "endpoint": "https://localhost:8080",
+        "disableServerCertificateValidation": true,
+        "clientCertificateId": "7b59455a-ddd6-4b9b-800f-aa1063743520"
+      }
+    },
+    {
+      "id": "81e559c8-c540-4c96-9adb-312d85743c4d",
+      "name": "Insecure API Reflection",
       "importerName": "GrpcServerReflection",
       "createMissingOperations": true,
       "options": {
@@ -17,10 +28,9 @@
     {
       "id": "7b59455a-ddd6-4b9b-800f-aa1063743520",
       "name": "tls",
-      "type": "key-cert-file",
+      "type": "single-file",
       "options": {
-        "keyPath": "../security/key.pem",
-        "certPath": "../security/cert.pem"
+        "path": "../security/cert.pem"
       }
     }
   ]
