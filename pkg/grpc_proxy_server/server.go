@@ -65,7 +65,8 @@ func (s *Server) GetHttpHandler() gin.HandlerFunc {
 func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	var err error
 
-	context, _ := context.WithTimeout(context.Background(), time.Second*5)
+	context, cancelCtx := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelCtx()
 
 	// Create a client connection to the gRPC server
 	if s.c.Secutiry.TlsConfig != nil {
