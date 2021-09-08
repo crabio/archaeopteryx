@@ -101,6 +101,8 @@ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out c
 
 `archaeopteryx` reads certificate and key from the config.
 
+NOTE. Remember, that with TLS option enabled, use `https` instead `http` in your browser.
+
 ## Test
 
 ### Unit test
