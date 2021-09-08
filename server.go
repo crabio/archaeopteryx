@@ -46,11 +46,15 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 	s.Config = config
 
 	// Read TLS config
-	if len(s.Config.Secutiry.Cert) != 0 && len(s.Config.Secutiry.Key) != 0 {
+	if s.Config.Secutiry.CertFS != nil &&
+		s.Config.Secutiry.CertName != nil &&
+		s.Config.Secutiry.KeyName != nil {
 		s.Config.Secutiry.TlsConfig, err = helpers.CreateTlsConfig(s.Config)
 		if err != nil {
 			return nil, fmt.Errorf("couldn't create TLS config. " + err.Error())
 		}
+	} else {
+		s.log.Warn("You haven't specified TLS certificates")
 	}
 
 	s.controllers = new(api_data.Controllers)

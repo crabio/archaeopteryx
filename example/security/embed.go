@@ -1,11 +1,9 @@
 package security
 
 import (
-	_ "embed"
+	// External
+	"embed"
 )
 
-//go:embed cert.pem
-var Cert []byte
-
-//go:embed key.pem
-var Key []byte
+//go:embed *
+var CertFS embed.FS

@@ -9,12 +9,20 @@ import (
 )
 
 func CreateTlsConfig(c *config.Config) (*tls.Config, error) {
-	serverCert, err := tls.X509KeyPair(c.Secutiry.Cert, c.Secutiry.Key)
+	certBytes, err := c.Secutiry.CertFS.ReadFile(*c.Secutiry.CertName)
+	if err != nil {
+		return nil, err
+	}
+	keyBytes, err := c.Secutiry.CertFS.ReadFile(*c.Secutiry.KeyName)
+	if err != nil {
+		return nil, err
+	}
+	cert, err := tls.X509KeyPair(certBytes, keyBytes)
 	if err != nil {
 		return nil, err
 	}
 	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{serverCert},
+		Certificates: []tls.Certificate{cert},
 		ClientAuth:   tls.NoClientCert,
 		// TODO Valid only for local test
 		InsecureSkipVerify: true,

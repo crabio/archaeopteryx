@@ -39,10 +39,12 @@ type Config struct {
 	}
 
 	Secutiry struct {
-		// PEM certificate file bytes
-		Cert []byte
-		// PEM key file bytes
-		Key []byte
+		// FS with the certufucates
+		CertFS *embed.FS
+		// PEM certificate file name
+		CertName *string
+		// PEM key file name
+		KeyName *string
 		// TLS config.
 		// Don't write this
 		// This struct will be parsed by archaeopteryx

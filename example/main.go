@@ -31,8 +31,11 @@ func main() {
 	conf.Docs.DocsRootFolder = "swagger"
 
 	// Add security certificates
-	conf.Secutiry.Cert = security.Cert
-	conf.Secutiry.Key = security.Key
+	certName := "cert.pem"
+	keyName := "key.pem"
+	conf.Secutiry.CertFS = &security.CertFS
+	conf.Secutiry.CertName = &certName
+	conf.Secutiry.KeyName = &keyName
 
 	// Init services
 	services := []archaeopteryx_service.IServiceServer{

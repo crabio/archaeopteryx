@@ -17,7 +17,7 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
-func TestNew(t *testing.T) {
+func TestNewInsecure(t *testing.T) {
 	c := new(api_data.Controllers)
 	c.Config = new(config.Config)
 	assert.NoError(t, configor.Load(c.Config))
@@ -28,6 +28,26 @@ func TestNew(t *testing.T) {
 	assert.NotNil(t, grpcs)
 
 	assert.NoError(t, grpcs.Run())
+	defer grpcs.Stop()
+
+	s := grpc_proxy_server.New(c.Config)
+	assert.NotNil(t, s)
+
+	assert.NoError(t, s.RegisterServices(services))
+}
+
+func TestNewSecure(t *testing.T) {
+	c := new(api_data.Controllers)
+	c.Config = new(config.Config)
+	assert.NoError(t, configor.Load(c.Config))
+	services := []service.IServiceServer{api_health_v1.New(c)}
+
+	grpcs, err := grpc_server.New(c.Config, c, services)
+	assert.NoError(t, err)
+	assert.NotNil(t, grpcs)
+
+	assert.NoError(t, grpcs.Run())
+	defer grpcs.Stop()
 
 	s := grpc_proxy_server.New(c.Config)
 	assert.NotNil(t, s)
