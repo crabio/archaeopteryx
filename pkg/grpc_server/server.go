@@ -26,15 +26,9 @@ type Server struct {
 }
 
 func New(c *config.Config, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
-	var err error
-
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
 	s.addr = ":" + strconv.FormatUint(c.GrpcPort, 10)
-	s.listener, err = net.Listen("tcp", s.addr)
-	if err != nil {
-		return nil, err
-	}
 
 	// Check that we have FS with certificates
 	if c.Secutiry.TlsConfig != nil {
@@ -60,6 +54,13 @@ func New(c *config.Config, controllers *api_data.Controllers, services []service
 }
 
 func (s *Server) Run() error {
+	var err error
+
+	s.listener, err = net.Listen("tcp", s.addr)
+	if err != nil {
+		return err
+	}
+
 	go func() {
 		if err := s.grpcServer.Serve(s.listener); err != nil {
 			s.log.WithError(err).Fatal("Couldn't serve gRPC server")

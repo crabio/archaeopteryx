@@ -23,6 +23,7 @@ type Server struct {
 	log      *logrus.Entry
 	c        *config.Config
 	Port     int
+	grpcAddr string
 	grpcConn *grpc.ClientConn
 	mux      *runtime.ServeMux
 }
@@ -36,6 +37,7 @@ func New(c *config.Config) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
 	s.c = c
+	s.grpcAddr = ":" + strconv.FormatUint(s.c.GrpcPort, 10)
 
 	// Create mux router to route HTTP requests in server
 	s.mux = runtime.NewServeMux(
@@ -70,10 +72,10 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 
 	// Create a client connection to the gRPC server
 	if s.c.Secutiry.TlsConfig != nil {
-		s.log.Info("Create secure connection to gRPC server")
+		s.log.WithField("grpcAddr", s.grpcAddr).Info("Create secure connection to gRPC server")
 		s.grpcConn, err = grpc.DialContext(
 			context,
-			":"+strconv.FormatUint(s.c.GrpcPort, 10),
+			s.grpcAddr,
 			grpc.WithBlock(),
 			grpc.WithTransportCredentials(credentials.NewTLS(s.c.Secutiry.TlsConfig)),
 		)
@@ -81,10 +83,10 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 			return err
 		}
 	} else {
-		s.log.Info("Create insecure connection to gRPC server")
+		s.log.WithField("grpcAddr", s.grpcAddr).Info("Create insecure connection to gRPC server")
 		s.grpcConn, err = grpc.DialContext(
 			context,
-			":"+strconv.FormatUint(s.c.GrpcPort, 10),
+			s.grpcAddr,
 			grpc.WithBlock(),
 			grpc.WithInsecure(),
 		)
