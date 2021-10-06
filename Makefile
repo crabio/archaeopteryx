@@ -19,10 +19,6 @@ install:
 		google.golang.org/grpc/cmd/protoc-gen-go-grpc \
 		github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
 		github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
-	curl -sSL \
-    	"https://github.com/bufbuild/buf/releases/download/v0.48.2/buf-$(shell uname -s)-$(shell uname -m)" \
-    	-o "$(shell go env GOPATH)/bin/buf" && \
-  	chmod +x "$(shell go env GOPATH)/bin/buf"
 
 	echo "Install linter"
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.42.0
