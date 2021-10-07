@@ -29,16 +29,12 @@ func TestNew(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, grpcs)
 
-	assert.NoError(t, grpcs.Run())
-
 	grpcps := grpc_proxy_server.New(c.Config)
 	assert.NotNil(t, grpcps)
-
-	assert.NoError(t, grpcps.RegisterServices(services))
 
 	sws, err := swagger.New(c.Config)
 	assert.NoError(t, err)
 
 	httpServer := http.New(c.Config, grpcps, sws)
-	httpServer.Run()
+	assert.NotNil(t, httpServer)
 }
