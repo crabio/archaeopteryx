@@ -4,20 +4,19 @@ import (
 	// External
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	// Internal
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
 )
 
 func TestCheck(t *testing.T) {
-	c := new(api_data.Controllers)
-	c.HealthChecker = healthchecker.New()
-	s := api_health_v1.New(c)
+	hc := healthchecker.New()
+	s := api_health_v1.New(hc, time.Second*10)
 
 	testCheck(t, s, &health_v1.HealthCheckRequest{})
 	testCheck(t, s, &health_v1.HealthCheckRequest{Service: ""})

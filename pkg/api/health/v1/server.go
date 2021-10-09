@@ -4,13 +4,14 @@ import (
 	// External
 
 	"context"
+	"time"
 
+	"github.com/alexliesenfeld/health"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	// Internal
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
 )
@@ -18,18 +19,21 @@ import (
 // HealthServiceServer - service for checking service health.
 // Created bases on https://github.com/grpc/grpc/blob/master/doc/health-checking.md
 type HealthServiceServer struct {
-	log *logrus.Entry
 	// Required to have revese compatability
 	health_v1.UnimplementedHealthServer
 
-	controllers *api_data.Controllers
+	log *logrus.Entry
+	hc  health.Checker
+	// Watch update period
+	wup time.Duration
 }
 
 // New - creates new instance of HealthServiceServer
-func New(controllers *api_data.Controllers) *HealthServiceServer {
+func New(hc health.Checker, wup time.Duration) *HealthServiceServer {
 	server := new(HealthServiceServer)
 	server.log = helpers.CreateComponentLogger("grpc-healthcheck-v1")
-	server.controllers = controllers
+	server.hc = hc
+	server.wup = wup
 	return server
 }
 

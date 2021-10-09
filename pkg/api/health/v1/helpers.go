@@ -11,7 +11,7 @@ import (
 )
 
 func (s *HealthServiceServer) getHealthStatus(ctx context.Context) health_v1.HealthCheckResponse_ServingStatus {
-	status := s.controllers.HealthChecker.Check(ctx)
+	status := s.hc.Check(ctx)
 
 	if status.Status == health.StatusUp {
 		return health_v1.HealthCheckResponse_SERVING

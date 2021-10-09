@@ -14,15 +14,15 @@ import (
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
-func createFsHandler(fileSystem embed.FS, folder string) (http.Handler, error) {
-	subFS, err := fs.Sub(fileSystem, folder)
+func createFsHandler(docsFS *embed.FS, folder string) (http.Handler, error) {
+	subFS, err := fs.Sub(*docsFS, folder)
 	if err != nil {
 		return nil, err
 	}
 	return http.FileServer(http.FS(subFS)), nil
 }
 
-func (s *Server) createHomePageHandler() (http.Handler, error) {
+func (s *Server) createHomePageHandler(docsFS *embed.FS, docsRootFolder string) (http.Handler, error) {
 	var swaggerFilePaths []string
 
 	// Parse and add pkg's swagger files
@@ -33,13 +33,11 @@ func (s *Server) createHomePageHandler() (http.Handler, error) {
 	swaggerFilePaths = append(swaggerFilePaths, pkgSwaggerFilePaths...)
 
 	// Parse and add user's swagger files
-	if s.config.Docs.DocsFS != nil {
-		userSwaggerFilePaths, err := GetSwaggerFilesPaths(*s.config.Docs.DocsFS, s.config.Docs.DocsRootFolder, helpers.USER_STATIC_DOCS_PREFIX)
-		if err != nil {
-			s.log.WithError(err).Error("No user's swagger files found")
-		} else {
-			swaggerFilePaths = append(swaggerFilePaths, userSwaggerFilePaths...)
-		}
+	userSwaggerFilePaths, err := GetSwaggerFilesPaths(*docsFS, docsRootFolder, helpers.USER_STATIC_DOCS_PREFIX)
+	if err != nil {
+		s.log.WithError(err).Error("No user's swagger files found")
+	} else {
+		swaggerFilePaths = append(swaggerFilePaths, userSwaggerFilePaths...)
 	}
 
 	swaggerHomeTmpl, err := template.ParseFS(docs_swagger.SwaggerTmpl, "*")

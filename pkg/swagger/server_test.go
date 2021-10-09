@@ -14,10 +14,10 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	conf := new(config.Config)
-	assert.NoError(t, configor.Load(conf))
+	cfg := new(config.Config)
+	assert.NoError(t, configor.Load(cfg))
 
-	s, err := swagger.New(conf)
+	s, err := swagger.New(nil, cfg.Docs.DocsRootFolder)
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 }

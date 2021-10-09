@@ -10,7 +10,6 @@ import (
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_server"
@@ -23,44 +22,36 @@ import (
 )
 
 type Server struct {
-	Config *config.Config
-
-	log         *logrus.Entry
-	controllers *api_data.Controllers
-	services    []service.IServiceServer
+	log      *logrus.Entry
+	services []service.IServiceServer
 
 	grpcs      *grpc_server.Server
 	grpcps     *grpc_proxy_server.Server
 	httpServer *http.Server
 }
 
-func New(config *config.Config, externalServices []service.IServiceServer) (*Server, error) {
+func New(cfg *config.Config, externalServices []service.IServiceServer) (*Server, error) {
 	var err error
 
 	s := new(Server)
 
-	helpers.InitLogger(config)
+	helpers.InitLogger(cfg)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-server")
-	s.log.WithField("config", helpers.MustMarshal(config)).Info("Config is inited")
-
-	s.Config = config
-	s.controllers = new(api_data.Controllers)
-	s.controllers.Config = config
-	s.controllers.HealthChecker = healthchecker.New()
+	s.log.WithField("config", helpers.MustMarshal(cfg)).Info("Config is inited")
 
 	// Add internal services
-	s.services = append(s.services, api_health_v1.New(s.controllers))
+	s.services = append(s.services, api_health_v1.New(healthchecker.New(), cfg.Health.WatchUpdatePeriod))
 
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	s.grpcs, err = grpc_server.New(s.Config.GrpcPort, s.controllers, s.services)
+	s.grpcs, err = grpc_server.New(cfg.GrpcPort, s.services)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
 
 	// Init gRPC server proxy on run, because it can be inited only with working gRPC server
-	s.grpcps = grpc_proxy_server.New(s.Config)
+	s.grpcps = grpc_proxy_server.New(cfg.RestApiPort, cfg.GrpcPort)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
 	}
@@ -74,12 +65,12 @@ func New(config *config.Config, externalServices []service.IServiceServer) (*Ser
 		return nil, fmt.Errorf("couldn't register gRPC proxy services. " + err.Error())
 	}
 
-	sws, err := swagger.New(s.Config)
+	sws, err := swagger.New(cfg.Docs.DocsFS, cfg.Docs.DocsRootFolder)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create Swagger docs server. " + err.Error())
 	}
 
-	s.httpServer = http.New(s.Config, s.grpcps, sws)
+	s.httpServer = http.New(cfg.RestApiPort, s.grpcps, sws)
 
 	return s, nil
 }

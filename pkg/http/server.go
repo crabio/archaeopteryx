@@ -7,25 +7,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/toorop/gin-logrus"
+	ginlogrus "github.com/toorop/gin-logrus"
 
 	// Internal
-	"github.com/iakrevetkho/archaeopteryx/config"
+
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/iakrevetkho/archaeopteryx/pkg/swagger"
 )
 
 type Server struct {
-	c   *config.Config
-	log *logrus.Entry
-	r   *gin.Engine
+	log         *logrus.Entry
+	restApiPort uint64
+	r           *gin.Engine
 }
 
-func New(c *config.Config, grpcps *grpc_proxy_server.Server, sws *swagger.Server) *Server {
+func New(restApiPort uint64, grpcps *grpc_proxy_server.Server, sws *swagger.Server) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-http")
-	s.c = c
+	s.restApiPort = restApiPort
 	s.r = gin.New()
 	s.r.Use(ginlogrus.Logger(s.log), gin.Recovery())
 
@@ -41,7 +41,7 @@ func New(c *config.Config, grpcps *grpc_proxy_server.Server, sws *swagger.Server
 
 func (s *Server) Run() {
 	go func() {
-		if err := s.r.Run(":" + strconv.FormatUint(s.c.RestApiPort, 10)); err != nil {
+		if err := s.r.Run(":" + strconv.FormatUint(s.restApiPort, 10)); err != nil {
 			s.log.WithError(err).Fatal("Couldn't run http server")
 		}
 	}()
