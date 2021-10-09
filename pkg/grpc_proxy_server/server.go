@@ -12,15 +12,15 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	// Internal
-	"github.com/iakrevetkho/archaeopteryx/config"
+
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
 
 type Server struct {
 	log      *logrus.Entry
-	c        *config.Config
-	Port     int
+	grpcPort uint64
+	port     uint64
 	grpcConn *grpc.ClientConn
 	mux      *runtime.ServeMux
 }
@@ -30,10 +30,11 @@ type Server struct {
 // and proxy them onto gRPC server on [grpcServer] port.
 //
 // Requests from the [port] will be redirected to the [grpcServer] port.
-func New(c *config.Config) *Server {
+func New(port uint64, grpcPort uint64) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
-	s.c = c
+	s.grpcPort = grpcPort
+	s.port = port
 
 	// Create mux router to route HTTP requests in server
 	s.mux = runtime.NewServeMux(
@@ -66,7 +67,7 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	// Create a client connection to the gRPC server
 	s.grpcConn, err = grpc.DialContext(
 		context.Background(),
-		":"+strconv.FormatUint(s.c.GrpcPort, 10),
+		":"+strconv.FormatUint(s.grpcPort, 10),
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	)

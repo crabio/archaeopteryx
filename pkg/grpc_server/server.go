@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	// Internal
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 	"github.com/iakrevetkho/archaeopteryx/service"
 )
@@ -23,7 +22,7 @@ type Server struct {
 }
 
 // Function creates gRPC server on the [port]
-func New(port uint64, controllers *api_data.Controllers, services []service.IServiceServer) (*Server, error) {
+func New(port uint64, services []service.IServiceServer) (*Server, error) {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
 	s.Port = port

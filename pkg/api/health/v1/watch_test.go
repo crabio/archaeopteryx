@@ -16,7 +16,6 @@ import (
 	// Internal
 
 	"github.com/iakrevetkho/archaeopteryx/config"
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	api_health_v1 "github.com/iakrevetkho/archaeopteryx/pkg/api/health/v1"
 	"github.com/iakrevetkho/archaeopteryx/pkg/healthchecker"
 	health_v1 "github.com/iakrevetkho/archaeopteryx/proto/gen/health/v1"
@@ -48,13 +47,11 @@ func (s *MockhWatchServer) Context() context.Context {
 }
 
 func TestWatch(t *testing.T) {
-	c := new(api_data.Controllers)
-	c.Config = new(config.Config)
-	assert.NoError(t, configor.Load(c.Config))
-	c.HealthChecker = healthchecker.New()
-	c.Config.Health.WatchUpdatePeriod = time.Millisecond * 100
+	cfg := new(config.Config)
+	assert.NoError(t, configor.Load(cfg))
+	hc := healthchecker.New()
 
-	s := api_health_v1.New(c)
+	s := api_health_v1.New(hc, time.Millisecond*100)
 
 	testWatch(t, s, &health_v1.HealthCheckRequest{})
 	testWatch(t, s, &health_v1.HealthCheckRequest{Service: ""})

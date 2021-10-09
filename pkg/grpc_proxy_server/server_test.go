@@ -10,15 +10,13 @@ import (
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
-	api_data "github.com/iakrevetkho/archaeopteryx/pkg/api/data"
 	"github.com/iakrevetkho/archaeopteryx/pkg/grpc_proxy_server"
 )
 
 func TestNew(t *testing.T) {
-	c := new(api_data.Controllers)
-	c.Config = new(config.Config)
-	assert.NoError(t, configor.Load(c.Config))
+	cfg := new(config.Config)
+	assert.NoError(t, configor.Load(cfg))
 
-	s := grpc_proxy_server.New(c.Config)
+	s := grpc_proxy_server.New(cfg.RestApiPort, cfg.GrpcPort)
 	assert.NotNil(t, s)
 }
