@@ -10,6 +10,7 @@ require (
 	github.com/iakrevetkho/woodpecker v1.0.0
 	github.com/jinzhu/configor v1.2.1
 	github.com/sirupsen/logrus v1.8.1
+	github.com/soheilhy/cmux v0.1.5 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/toorop/gin-logrus v0.0.0-20210225092905-2c785434f26f
 	google.golang.org/genproto v0.0.0-20210903162649-d08c68adba83

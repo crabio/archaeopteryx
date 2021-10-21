@@ -3,7 +3,7 @@ package http
 import (
 	// External
 
-	"strconv"
+	"net"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -17,15 +17,13 @@ import (
 )
 
 type Server struct {
-	log         *logrus.Entry
-	restApiPort uint64
-	r           *gin.Engine
+	log *logrus.Entry
+	r   *gin.Engine
 }
 
-func New(restApiPort uint64, grpcps *grpc_proxy_server.Server, sws *swagger.Server) *Server {
+func New(grpcps *grpc_proxy_server.Server, sws *swagger.Server) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-http")
-	s.restApiPort = restApiPort
 	s.r = gin.New()
 	s.r.Use(ginlogrus.Logger(s.log), gin.Recovery())
 
@@ -39,9 +37,10 @@ func New(restApiPort uint64, grpcps *grpc_proxy_server.Server, sws *swagger.Serv
 	return s
 }
 
-func (s *Server) Run() {
+func (s *Server) Run(l net.Listener) {
 	go func() {
-		if err := s.r.Run(":" + strconv.FormatUint(s.restApiPort, 10)); err != nil {
+
+		if err := s.r.RunListener(l); err != nil {
 			s.log.WithError(err).Fatal("Couldn't run http server")
 		}
 	}()
