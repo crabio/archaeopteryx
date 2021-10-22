@@ -7,7 +7,7 @@
       "importerName": "GrpcServerReflection",
       "createMissingOperations": true,
       "options": {
-        "endpoint": "http://localhost:8080/rpc",
+        "endpoint": "http://localhost:8080",
         "disableServerCertificateValidation": true
       }
     }

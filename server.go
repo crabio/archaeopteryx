@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	"github.com/soheilhy/cmux"
@@ -27,6 +28,8 @@ type Server struct {
 	log      *logrus.Entry
 	services []service.IServiceServer
 
+	// Data router between gRPC and HTTP
+	mux cmux.CMux
 	// Main TCP listener
 	listener net.Listener
 	// gRPC sub-listener
@@ -48,12 +51,19 @@ func New(cfg *config.Config, externalServices []service.IServiceServer) (*Server
 	s.log = helpers.CreateComponentLogger("archeaopteryx-server")
 	s.log.WithField("config", helpers.MustMarshal(cfg)).Info("Config is inited")
 
-	if s.listener, err = net.Listen("tcp", ":8080"); err != nil {
+	// Create data listeners and mux router
+	if s.listener, err = net.Listen("tcp", ":"+strconv.FormatUint(cfg.Port, 10)); err != nil {
 		return nil, fmt.Errorf("couldn't create net listener. " + err.Error())
 	}
-	m := cmux.New(s.listener)
-	s.grpcListener = m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	s.httpListener = m.Match(cmux.HTTP1Fast())
+	s.mux = cmux.New(s.listener)
+	s.grpcListener = s.mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	s.httpListener = s.mux.Match(cmux.HTTP1Fast())
+	// Run mux router
+	go func() {
+		if err := s.mux.Serve(); err != nil {
+			s.log.WithError(err).Fatal("Couldn't serve data mux")
+		}
+	}()
 
 	// Add internal services
 	s.services = append(s.services, api_health_v1.New(healthchecker.New(), cfg.Health.WatchUpdatePeriod))

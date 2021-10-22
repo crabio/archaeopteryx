@@ -77,7 +77,6 @@ func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	if err != nil {
 		return err
 	}
-	s.log.Debug("Services are registered")
 
 	// Register internal proxy service routes
 	for _, service := range services {
