@@ -56,8 +56,12 @@ func New(cfg *config.Config, externalServices []service.IServiceServer) (*Server
 		return nil, fmt.Errorf("couldn't create net listener. " + err.Error())
 	}
 	s.mux = cmux.New(s.listener)
-	s.grpcListener = s.mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	s.httpListener = s.mux.Match(cmux.HTTP1Fast())
+	s.grpcListener = s.mux.MatchWithWriters(
+		cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"),
+		cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc+proto"),
+	)
+	s.httpListener = s.mux.Match(cmux.Any())
+
 	// Run mux router
 	go func() {
 		if err := s.mux.Serve(); err != nil {

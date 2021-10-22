@@ -63,14 +63,14 @@ func (s *Server) GetHttpHandler() gin.HandlerFunc {
 func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	var err error
 
-	s.log.Debug("Connecting to grpc")
+	s.log.WithField("url", "localhost:"+strconv.FormatUint(s.port, 10)).Debug("Connecting to grpc")
 	// Create connection context
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 	// Create a client connection to the gRPC server
 	s.grpcConn, err = grpc.DialContext(
 		ctx,
-		":"+strconv.FormatUint(s.port, 10),
+		"localhost:"+strconv.FormatUint(s.port, 10),
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	)
