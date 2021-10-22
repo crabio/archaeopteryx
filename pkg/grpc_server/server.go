@@ -4,7 +4,6 @@ import (
 	// External
 
 	"net"
-	"strconv"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -17,15 +16,12 @@ import (
 
 type Server struct {
 	log        *logrus.Entry
-	Port       uint64
 	grpcServer *grpc.Server
 }
 
-// Function creates gRPC server on the [port]
-func New(port uint64, services []service.IServiceServer) (*Server, error) {
+func New(services []service.IServiceServer) (*Server, error) {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc")
-	s.Port = port
 	s.grpcServer = grpc.NewServer()
 
 	// Register service routes
@@ -42,20 +38,13 @@ func New(port uint64, services []service.IServiceServer) (*Server, error) {
 	return s, nil
 }
 
-// Function runs gRPC server on the [port]
-func (s *Server) Run() error {
-	// Create a listener on TCP port
-	listener, err := net.Listen("tcp", ":"+strconv.FormatUint(s.Port, 10))
-	if err != nil {
-		return err
-	}
-
+func (s *Server) Run(l net.Listener) error {
 	go func() {
-		if err := s.grpcServer.Serve(listener); err != nil {
+		if err := s.grpcServer.Serve(l); err != nil {
 			s.log.WithError(err).Fatal("Couldn't serve gRPC server")
 		}
 	}()
-	s.log.WithField("url", ":"+strconv.FormatUint(s.Port, 10)).Info("Serving gRPC")
+	s.log.Info("Serving gRPC")
 
 	return nil
 }

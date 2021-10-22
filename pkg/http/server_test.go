@@ -28,16 +28,16 @@ func TestNew(t *testing.T) {
 
 	services := []service.IServiceServer{api_health_v1.New(hc, time.Second*10)}
 
-	grpcs, err := grpc_server.New(cfg.GrpcPort, services)
+	grpcs, err := grpc_server.New(services)
 	assert.NoError(t, err)
 	assert.NotNil(t, grpcs)
 
-	grpcps := grpc_proxy_server.New(cfg.GrpcPort, cfg.RestApiPort)
+	grpcps := grpc_proxy_server.New(cfg.Port)
 	assert.NotNil(t, grpcps)
 
 	sws, err := swagger.New(nil, cfg.Docs.DocsRootFolder)
 	assert.NoError(t, err)
 
-	httpServer := http.New(cfg.RestApiPort, grpcps, sws)
+	httpServer := http.New(grpcps, sws)
 	assert.NotNil(t, httpServer)
 }

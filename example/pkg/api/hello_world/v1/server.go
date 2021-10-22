@@ -28,7 +28,7 @@ func New() *HelloServiceServer {
 // RegisterGrpc - HealthServiceServer's method to registrate gRPC service server handlers
 func (s *HelloServiceServer) RegisterGrpc(sr grpc.ServiceRegistrar) error {
 	hello_world_v1.RegisterHelloServiceServer(sr, s)
-	s.log.Logger.Debug("Service gRPC registered")
+	s.log.Logger.Debug("gRPC HelloServiceServer registered")
 	return nil
 }
 
@@ -37,6 +37,6 @@ func (s *HelloServiceServer) RegisterGrpcProxy(ctx context.Context, mux *runtime
 	if err := hello_world_v1.RegisterHelloServiceHandler(ctx, mux, conn); err != nil {
 		return err
 	}
-	s.log.Logger.Debug("Service gRPC proxy registered")
+	s.log.Logger.Debug("gRPC proxy HelloServiceServer registered")
 	return nil
 }

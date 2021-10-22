@@ -11,6 +11,7 @@ import (
 
 	// Internal
 
+	"github.com/iakrevetkho/archaeopteryx/docs"
 	"github.com/iakrevetkho/archaeopteryx/pkg/helpers"
 )
 
@@ -32,11 +33,11 @@ func New(docsFS *embed.FS, docsRootFolder string) (*Server, error) {
 		return nil, err
 	}
 
+	s.pkgFsHandler, err = createFsHandler(&docs.Swagger, "swagger")
+	if err != nil {
+		return nil, err
+	}
 	if docsFS != nil {
-		s.pkgFsHandler, err = createFsHandler(docsFS, "swagger")
-		if err != nil {
-			return nil, err
-		}
 		s.userFsHandler, err = createFsHandler(docsFS, docsRootFolder)
 		if err != nil {
 			return nil, err
@@ -58,6 +59,8 @@ func (s *Server) GetMainPageHandler() gin.HandlerFunc {
 
 func (s *Server) GetPkgDocsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		s.log.Debug("Pkg doc handler: " + c.Request.URL.Path)
+		s.log.Debug("c.Param(file): " + c.Param("file"))
 		// Change file URL path for FS route
 		c.Request.URL.Path = c.Param("file")
 		s.pkgFsHandler.ServeHTTP(c.Writer, c.Request)

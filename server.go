@@ -2,11 +2,14 @@ package archaeopteryx
 
 import (
 	// External
-
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
+
+	"github.com/soheilhy/cmux"
 
 	// Internal
 	"github.com/iakrevetkho/archaeopteryx/config"
@@ -25,6 +28,15 @@ type Server struct {
 	log      *logrus.Entry
 	services []service.IServiceServer
 
+	// Data router between gRPC and HTTP
+	mux cmux.CMux
+	// Main TCP listener
+	listener net.Listener
+	// gRPC sub-listener
+	grpcListener net.Listener
+	// HTTP sub-listener
+	httpListener net.Listener
+
 	grpcs      *grpc_server.Server
 	grpcps     *grpc_proxy_server.Server
 	httpServer *http.Server
@@ -39,25 +51,43 @@ func New(cfg *config.Config, externalServices []service.IServiceServer) (*Server
 	s.log = helpers.CreateComponentLogger("archeaopteryx-server")
 	s.log.WithField("config", helpers.MustMarshal(cfg)).Info("Config is inited")
 
+	// Create data listeners and mux router
+	if s.listener, err = net.Listen("tcp", ":"+strconv.FormatUint(cfg.Port, 10)); err != nil {
+		return nil, fmt.Errorf("couldn't create net listener. " + err.Error())
+	}
+	s.mux = cmux.New(s.listener)
+	s.grpcListener = s.mux.MatchWithWriters(
+		cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"),
+		cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc+proto"),
+	)
+	s.httpListener = s.mux.Match(cmux.Any())
+
+	// Run mux router
+	go func() {
+		if err := s.mux.Serve(); err != nil {
+			s.log.WithError(err).Fatal("Couldn't serve data mux")
+		}
+	}()
+
 	// Add internal services
 	s.services = append(s.services, api_health_v1.New(healthchecker.New(), cfg.Health.WatchUpdatePeriod))
 
 	// Add external services
 	s.services = append(s.services, externalServices...)
 
-	s.grpcs, err = grpc_server.New(cfg.GrpcPort, s.services)
+	s.grpcs, err = grpc_server.New(s.services)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC server. " + err.Error())
 	}
 
 	// Init gRPC server proxy on run, because it can be inited only with working gRPC server
-	s.grpcps = grpc_proxy_server.New(cfg.RestApiPort, cfg.GrpcPort)
+	s.grpcps = grpc_proxy_server.New(cfg.Port)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't create gRPC proxy server. " + err.Error())
 	}
 
 	// Run gRPC server before creating gRPC proxy to allow gRPC proxy dial connection with gRPC
-	if err := s.grpcs.Run(); err != nil {
+	if err := s.grpcs.Run(s.grpcListener); err != nil {
 		return nil, fmt.Errorf("couldn't run gRPC server. " + err.Error())
 	}
 
@@ -70,18 +100,23 @@ func New(cfg *config.Config, externalServices []service.IServiceServer) (*Server
 		return nil, fmt.Errorf("couldn't create Swagger docs server. " + err.Error())
 	}
 
-	s.httpServer = http.New(cfg.RestApiPort, s.grpcps, sws)
+	s.httpServer = http.New(s.grpcps, sws)
 
 	return s, nil
 }
 
 func (s *Server) Run() error {
-	s.httpServer.Run()
+	s.httpServer.Run(s.httpListener)
 
 	s.log.Info("Wait exit signal")
 	quitSignal := make(chan os.Signal, 1)
 	signal.Notify(quitSignal, syscall.SIGINT, syscall.SIGTERM)
 	<-quitSignal
+
+	s.log.Info("Closing listeners")
+	if err := s.listener.Close(); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -17,6 +17,6 @@ func TestNew(t *testing.T) {
 	cfg := new(config.Config)
 	assert.NoError(t, configor.Load(cfg))
 
-	s := grpc_proxy_server.New(cfg.RestApiPort, cfg.GrpcPort)
+	s := grpc_proxy_server.New(cfg.Port)
 	assert.NotNil(t, s)
 }

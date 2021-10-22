@@ -4,6 +4,7 @@ import (
 	// External
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -19,7 +20,6 @@ import (
 
 type Server struct {
 	log      *logrus.Entry
-	grpcPort uint64
 	port     uint64
 	grpcConn *grpc.ClientConn
 	mux      *runtime.ServeMux
@@ -30,10 +30,9 @@ type Server struct {
 // and proxy them onto gRPC server on [grpcServer] port.
 //
 // Requests from the [port] will be redirected to the [grpcServer] port.
-func New(port uint64, grpcPort uint64) *Server {
+func New(port uint64) *Server {
 	s := new(Server)
 	s.log = helpers.CreateComponentLogger("archeaopteryx-grpc-proxy")
-	s.grpcPort = grpcPort
 	s.port = port
 
 	// Create mux router to route HTTP requests in server
@@ -64,10 +63,13 @@ func (s *Server) GetHttpHandler() gin.HandlerFunc {
 func (s *Server) RegisterServices(services []service.IServiceServer) error {
 	var err error
 
+	// Create connection context
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
 	// Create a client connection to the gRPC server
 	s.grpcConn, err = grpc.DialContext(
-		context.Background(),
-		":"+strconv.FormatUint(s.grpcPort, 10),
+		ctx,
+		"localhost:"+strconv.FormatUint(s.port, 10),
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
 	)

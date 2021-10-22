@@ -22,7 +22,7 @@ func TestNew(t *testing.T) {
 
 	hc := healthchecker.New()
 
-	s, err := grpc_server.New(cfg.GrpcPort, []service.IServiceServer{api_health_v1.New(hc, cfg.Health.WatchUpdatePeriod)})
+	s, err := grpc_server.New([]service.IServiceServer{api_health_v1.New(hc, cfg.Health.WatchUpdatePeriod)})
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 }
